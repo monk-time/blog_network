@@ -1,16 +1,14 @@
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest
 from django.shortcuts import render
 
 
 def index(request: HttpRequest):
     template = 'posts/index.html'
-    return render(request, template)
+    context = {'title': 'Это главная страница проекта Yatube'}
+    return render(request, template, context)
 
 
 def group_posts(request: HttpRequest, slug: str):
-    return HttpResponse(f'Посты группы "{slug}"')
-
-
-def group_tolstoy(request: HttpRequest):
     template = 'posts/group_list.html'
-    return render(request, template)
+    context = {'title': 'Здесь будет информация о группах проекта Yatube'}
+    return render(request, template, context)
