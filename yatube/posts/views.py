@@ -9,3 +9,8 @@ def index(request: HttpRequest):
 
 def group_posts(request: HttpRequest, slug: str):
     return HttpResponse(f'Посты группы "{slug}"')
+
+
+def group_tolstoy(request: HttpRequest):
+    template = 'posts/group_list.html'
+    return render(request, template)
