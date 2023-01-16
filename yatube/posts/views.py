@@ -14,7 +14,7 @@ def index(request: HttpRequest):
 
 def group_posts(request: HttpRequest, slug: str):
     group = get_object_or_404(Group, slug=slug)
-    posts = Post.objects.filter(group=group).all()[:POSTS_PER_PAGE]
+    posts = group.posts.all()[:POSTS_PER_PAGE]  # type: ignore
     context = {
         'group': group,
         'posts': posts,
