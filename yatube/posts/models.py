@@ -30,3 +30,6 @@ class Post(models.Model):
         null=True,
         verbose_name='related group',
     )
+
+    class Meta:
+        ordering = ['-pub_date']
