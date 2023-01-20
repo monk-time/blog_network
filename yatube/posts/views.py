@@ -7,7 +7,7 @@ from .models import Group, Post
 
 
 def index(request: HttpRequest):
-    posts = Post.objects.all()[:POSTS_PER_PAGE]
+    posts = Post.objects.select_related('group').all()[:POSTS_PER_PAGE]
     context = {'posts': posts}
     return render(request, 'posts/index.html', context)
 
