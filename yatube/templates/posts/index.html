@@ -9,12 +9,7 @@
     <h1>Последние обновления на сайте</h1>
     {% for post in posts %}
       <article>
-        {% include 'includes/post.html' %}
-        {% if post.group %}
-          <a href="{% url 'posts:group_list' post.group.slug %}">
-            все записи группы
-          </a>
-        {% endif %}
+        {% include 'includes/post.html' with show_group=True %}
       </article>
       {% if not forloop.last %}<hr>{% endif %}
     {% endfor %}
