@@ -18,15 +18,17 @@
     <title>
       {% block title %}
         Заголовок страницы
-      {% endblock title %}
+      {% endblock %}
     </title>
   </head>
   <body>
     {% include 'includes/header.html' %}
     <main>
-      {% block content %}
-        Контент не подвезли :(
-      {% endblock content %}
+      <div class="container py-5">
+        {% block content %}
+          Контент не подвезли :(
+        {% endblock %}
+      </div>
     </main>
     {% include 'includes/footer.html' %}
   </body>

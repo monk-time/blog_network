@@ -1,22 +1,29 @@
 {% extends 'base_card.html' %}
 
 {% block title %}
-  Зарегистрироваться
+  Войти
 {% endblock %}
 
 {% block card_title %}
-  Зарегистрироваться
+  Войти на сайт
 {% endblock %}
 
 {% block card_body %}
   {% include 'includes/form_errors.html' %}
-  <form method="post" action="{% url 'users:signup' %}">
+  <form method="post"
+    {% if action_url %}
+      action="{% url action_url %}"
+    {% endif %}
+  >
     {% csrf_token %}
     {% include 'includes/form_fields.html' %}
     <div class="col-md-6 offset-md-4">
       <button type="submit" class="btn btn-primary">
-        Зарегистрироваться
+        Войти
       </button>
+      <a href="{% url 'password_reset' %}" class="btn btn-link">
+        Забыли пароль?
+      </a>
     </div>
   </form>
 {% endblock %}

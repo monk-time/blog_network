@@ -116,3 +116,10 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # Display settings
 
 POSTS_PER_PAGE = 10
+
+
+# URLs
+
+LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = 'posts:index'
+# LOGOUT_REDIRECT_URL = 'posts:index'

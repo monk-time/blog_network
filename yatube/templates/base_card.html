@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-md-8 p-5">
+      <div class="card">
+        <div class="card-header">
+          {% block card_title %}
+            Заголовок формы
+          {% endblock %}
+        </div>
+        <div class="card-body">
+          {% block card_body %}
+            Тело формы
+          {% endblock %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
