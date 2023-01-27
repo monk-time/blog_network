@@ -13,6 +13,7 @@
             Зарегистрироваться
           </div>
           <div class="card-body">
+            {% load user_filters %}
             {% if form.errors %}
               {% for field in form %}
                 {% for error in field.errors %}
@@ -31,14 +32,14 @@
             <form method="post" action="{% url 'users:signup' %}">
               {% csrf_token %}
               {% for field in form %}
-                <div class="form-group row my-3 p-3">
+                <div class="form-group row my-3 px-3">
                   <label for="{{ field.id_for_label }}">
                     {{ field.label }}
                     {% if field.field.required %}
                       <span class="required text-danger">*</span>
                     {% endif %}
                   </label>
-                  {{ field }}
+                  {{ field|addclass:'form-control' }}
                   {% if field.help_text %}
                     <small id="{{ field.id_for_label }}-help"
                       class="form-text text-muted">
