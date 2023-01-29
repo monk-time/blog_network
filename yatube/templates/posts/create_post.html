@@ -1,0 +1,40 @@
+{% extends 'base_card.html' %}
+
+{% block title %}
+  {% if is_edit %}
+    Редактировать пост
+  {% else %}
+    Новый пост
+  {% endif %}
+{% endblock %}
+
+{% block card_title %}
+  {% if is_edit %}
+    Редактировать пост
+  {% else %}
+    Новый пост
+  {% endif %}
+{% endblock %}
+
+{% block card_body %}
+  {% include 'includes/form_errors.html' %}
+  <form method="post" action="
+    {% if is_edit %}
+      {% url 'posts:post_edit' form.instance.pk %}
+    {% else %}
+      {% url 'posts:post_create' %}
+    {% endif %}
+  ">
+    {% csrf_token %}
+    {% include 'includes/form_fields.html' %}
+    <div class="col-md-6 offset-md-4">
+      <button type="submit" class="btn btn-primary">
+        {% if is_edit %}
+          Сохранить
+        {% else %}
+          Добавить
+        {% endif %}
+      </button>
+    </div>
+  </form>
+{% endblock %}

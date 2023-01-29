@@ -18,13 +18,13 @@ class Group(models.Model):
 
 
 class Post(models.Model):
-    text = models.TextField("содержимое поста")
+    text = models.TextField('текст поста', help_text='Текст нового поста')
     pub_date = models.DateTimeField('дата публикации', auto_now_add=True)
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='posts',
-        verbose_name="автор поста",
+        verbose_name='автор поста',
     )
     group = models.ForeignKey(
         Group,
@@ -32,7 +32,8 @@ class Post(models.Model):
         related_name='posts',
         blank=True,
         null=True,
-        verbose_name='связанное сообщество',
+        verbose_name='группа',
+        help_text='Группа, к которой будет относиться пост',
     )
 
     class Meta:
