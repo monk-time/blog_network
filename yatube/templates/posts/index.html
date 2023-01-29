@@ -6,7 +6,7 @@
 
 {% block content %}
   <h1>Последние обновления на сайте</h1>
-  {% for post in page %}
+  {% for post in page_obj %}
     {% include 'posts/includes/post.html' with show_group=True %}
     {% if not forloop.last %}<hr>{% endif %}
   {% endfor %}

@@ -17,7 +17,7 @@ def paginate(request: HttpRequest, posts) -> Page:
 
 def index(request: HttpRequest):
     posts = Post.objects.select_related('group', 'author')
-    context = {'page': paginate(request, posts)}
+    context = {'page_obj': paginate(request, posts)}
     return render(request, 'posts/index.html', context)
 
 
@@ -26,7 +26,7 @@ def group_posts(request: HttpRequest, slug: str):
     posts = group.posts.select_related('author')  # type: ignore
     context = {
         'group': group,
-        'page': paginate(request, posts),
+        'page_obj': paginate(request, posts),
     }
     return render(request, 'posts/group_list.html', context)
 
@@ -36,7 +36,7 @@ def profile(request: HttpRequest, username: str):
     posts = user.posts.select_related('group')  # type: ignore
     context = {
         'user': user,
-        'page': paginate(request, posts),
+        'page_obj': paginate(request, posts),
     }
     return render(request, 'posts/profile.html', context)
 
