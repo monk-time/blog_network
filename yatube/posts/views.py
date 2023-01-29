@@ -35,7 +35,7 @@ def profile(request: HttpRequest, username: str):
     user = get_object_or_404(User, username=username)
     posts = user.posts.select_related('group')  # type: ignore
     context = {
-        'user': user,
+        'author': user,
         'page_obj': paginate(request, posts),
     }
     return render(request, 'posts/profile.html', context)
