@@ -2,6 +2,9 @@
   <ul class="fw-semibold">
       <li>
         Автор: {{ post.author.get_full_name }}
+        <a href="{% url 'posts:profile' post.author.username %}">
+          все посты пользователя
+        </a>
       </li>
       <li>
         Дата публикации: {{ post.pub_date|date:"d E Y" }}
@@ -13,6 +16,10 @@
       {% endif %}
   </ul>
   <p>{{ post.text|linebreaksbr }}</p>
+  <a href="{% url 'posts:post_detail' post.id %}">
+    подробная информация
+  </a>
+  <br>
   {% if show_group and post.group %}
     <a href="{% url 'posts:group_list' post.group.slug %}">
       все записи группы

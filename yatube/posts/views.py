@@ -3,7 +3,7 @@ from django.core.paginator import Page, Paginator
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404, render
 
-from .models import Group, Post
+from .models import Group, Post, User
 
 
 def paginate(request: HttpRequest, posts) -> Page:
@@ -27,3 +27,19 @@ def group_posts(request: HttpRequest, slug: str):
         'page': paginate(request, posts),
     }
     return render(request, 'posts/group_list.html', context)
+
+
+def profile(request, username):
+    user = get_object_or_404(User, username=username)
+    page = paginate(request, user.posts.all())  # type: ignore
+    context = {
+        'user': user,
+        'page': page,
+    }
+    return render(request, 'posts/profile.html', context)
+
+
+def post_detail(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    context = {'post': post}
+    return render(request, 'posts/post_detail.html', context)
