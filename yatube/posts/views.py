@@ -31,10 +31,10 @@ def group_posts(request: HttpRequest, slug: str):
 
 def profile(request, username):
     user = get_object_or_404(User, username=username)
-    page = paginate(request, user.posts.all())  # type: ignore
+    posts = user.posts.select_related('group')  # type: ignore
     context = {
         'user': user,
-        'page': page,
+        'page': paginate(request, posts),
     }
     return render(request, 'posts/profile.html', context)
 
