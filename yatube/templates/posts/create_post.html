@@ -1,4 +1,4 @@
-{% extends 'base_card.html' %}
+{% extends 'base_form.html' %}
 
 {% block title %}
   {% if is_edit %}
@@ -16,25 +16,18 @@
   {% endif %}
 {% endblock %}
 
-{% block card_body %}
-  {% include 'includes/form_errors.html' %}
-  <form method="post" action="
-    {% if is_edit %}
-      {% url 'posts:post_edit' form.instance.pk %}
-    {% else %}
-      {% url 'posts:post_create' %}
-    {% endif %}
-  ">
-    {% csrf_token %}
-    {% include 'includes/form_fields.html' %}
-    <div class="col-md-6 offset-md-4">
-      <button type="submit" class="btn btn-primary">
-        {% if is_edit %}
-          Сохранить
-        {% else %}
-          Добавить
-        {% endif %}
-      </button>
-    </div>
-  </form>
-{% endblock %}
+{% block action_url %}
+  {% if is_edit %}
+    {% url 'posts:post_edit' form.instance.pk %}
+  {% else %}
+    {% url 'posts:post_create' %}
+  {% endif %}
+{% endblock  %}
+
+{% block button_text %}
+  {% if is_edit %}
+    Сохранить
+  {% else %}
+    Добавить
+  {% endif %}
+{% endblock  %}

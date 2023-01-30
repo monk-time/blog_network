@@ -1,4 +1,4 @@
-{% extends 'base_card.html' %}
+{% extends 'base_form.html' %}
 
 {% block title %}
   Войти
@@ -8,22 +8,16 @@
   Войти на сайт
 {% endblock %}
 
-{% block card_body %}
-  {% include 'includes/form_errors.html' %}
-  <form method="post"
-    {% if action_url %}
-      action="{% url action_url %}"
-    {% endif %}
-  >
-    {% csrf_token %}
-    {% include 'includes/form_fields.html' %}
-    <div class="col-md-6 offset-md-4">
-      <button type="submit" class="btn btn-primary">
-        Войти
-      </button>
-      <a href="{% url 'users:password_reset' %}" class="btn btn-link">
-        Забыли пароль?
-      </a>
-    </div>
-  </form>
-{% endblock %}
+{% block action_url %}
+  {% url 'users:login' %}
+{% endblock  %}
+
+{% block button_text %}
+  Войти
+{% endblock  %}
+
+{% block extra %}
+  <a href="{% url 'users:password_reset' %}" class="btn btn-link">
+    Забыли пароль?
+  </a>
+{% endblock  %}
