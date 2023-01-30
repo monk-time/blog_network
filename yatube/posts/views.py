@@ -48,14 +48,10 @@ def post_detail(request: HttpRequest, post_id: int):
 
 @login_required
 def post_create(request: HttpRequest):
-    template = 'posts/create_post.html'
-    if request.method != 'POST':
-        return render(request, template, {'form': PostForm()})
-
     post = Post(author=request.user)
-    form = PostForm(request.POST, instance=post)
+    form = PostForm(request.POST or None, instance=post)
     if not form.is_valid():
-        return render(request, template, {'form': form})
+        return render(request, 'posts/create_post.html', {'form': form})
 
     form.save()
     return redirect('posts:profile', username=request.user.username)
@@ -67,14 +63,11 @@ def post_edit(request: HttpRequest, post_id: int):
     if request.user != post.author:
         return redirect('posts:post_detail', post_id=post_id)
 
-    template = 'posts/create_post.html'
-    if request.method != 'POST':
-        form = PostForm(instance=post)
-        return render(request, template, {'form': form, 'is_edit': True})
-
-    form = PostForm(request.POST, instance=post)
+    form = PostForm(request.POST or None, instance=post)
     if not form.is_valid():
-        return render(request, template, {'form': form, 'is_edit': True})
+        return render(
+            request, 'posts/create_post.html', {'form': form, 'is_edit': True}
+        )
 
     form.save()
     return redirect('posts:post_detail', post_id=post_id)
