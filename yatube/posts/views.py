@@ -54,7 +54,10 @@ def post_create(request: HttpRequest):
         return render(request, 'posts/create_post.html', {'form': form})
 
     form.save()
-    return redirect('posts:profile', username=request.user.username)
+    return redirect(
+        'posts:profile',
+        username=request.user.username,  # type: ignore
+    )
 
 
 @login_required
