@@ -17,51 +17,18 @@
       <div class="collapse navbar-collapse" id="navbarCollapsibleContent">
         <ul class="nav nav-pills ms-auto">
           {% with request.resolver_match.view_name as view_name %}
-          <li class="nav-item">
-            <a class="nav-link {% if view_name  == 'about:author' %}active{% endif %}"
-              href="{% url 'about:author' %}">
-              Об авторе
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if view_name  == 'about:tech' %}active{% endif %}"
-              href="{% url 'about:tech' %}">
-              Технологии
-            </a>
-          </li>
+          {% include 'includes/nav_link.html' with path='about:author' text='Об авторе' %}
+          {% include 'includes/nav_link.html' with path='about:tech' text='Технологии' %}
           {% if user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link {% if view_name  == 'posts:post_create' %}active{% endif %}"
-              href="{% url 'posts:post_create' %}">
-              Новая запись
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link link-light {% if view_name  == 'users:password_change' %}active{% endif %}"
-              href="{% url 'users:password_change' %}">
-              Изменить пароль
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link link-light {% if view_name  == 'users:logout' %}active{% endif %}"
-              href="{% url 'users:logout' %}">
-              Выйти
-            </a>
-          </li>
+          {% include 'includes/nav_link.html' with path='posts:post_create' text='Новая запись' %}
+          {% include 'includes/nav_link.html' with path='users:password_change' text='Изменить пароль' %}
+          {% include 'includes/nav_link.html' with path='users:logout' text='Выйти' %}
           <li>
             Пользователь: {{ user.username }}
           </li>
           {% else %}
-          <li class="nav-item">
-            <a class="nav-link link-light" href="{% url 'users:login' %}">
-              Войти
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link link-light" href="{% url 'users:signup' %}">
-              Регистрация
-            </a>
-          </li>
+          {% include 'includes/nav_link.html' with path='users:login' text='Войти' %}
+          {% include 'includes/nav_link.html' with path='users:signup' text='Регистрация' %}
           {% endif %}
           {% endwith %}
         </ul>
