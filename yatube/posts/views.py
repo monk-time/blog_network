@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Page, Paginator
+from django.db.models.query import QuerySet
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -8,7 +9,7 @@ from .forms import PostForm
 from .models import Group, Post, User
 
 
-def paginate(request: HttpRequest, posts) -> Page:
+def paginate(request: HttpRequest, posts: QuerySet) -> Page:
     """Разбить набор постов на страницы и вернуть запрашиваемую страницу."""
     paginator = Paginator(posts, settings.POSTS_PER_PAGE)
     page_number = request.GET.get('page')
