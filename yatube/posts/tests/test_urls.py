@@ -24,8 +24,9 @@ class PostURLTests(TestCase):
             description='Тестовое описание',
         )
         cls.post = Post.objects.create(
-            author=cls.user,
             text='Тестовый пост',
+            author=cls.user,
+            group=cls.group,
         )
         cls.urls_accessible_to_all = {
             '': 'posts/index.html',
