@@ -9,12 +9,12 @@ class Group(models.Model):
     slug = models.SlugField('читаемая часть URL', unique=True)
     description = models.TextField('информация о группе')
 
-    def __str__(self):
-        return self.title
-
     class Meta:
         verbose_name = 'Сообщество'
         verbose_name_plural = 'Сообщества'
+
+    def __str__(self):
+        return self.title
 
 
 class Post(models.Model):
@@ -41,4 +41,4 @@ class Post(models.Model):
         verbose_name_plural = 'Посты'
 
     def __str__(self):
-        return self.text
+        return self.text[:15]
