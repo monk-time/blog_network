@@ -27,7 +27,7 @@ class PostPagesTests(TestCase):
         cls.POSTS_CREATED = settings.POSTS_PER_PAGE + 3
         posts = [
             Post(
-                text=f'Тестовый пост №{i + 1}',
+                text='Тестовый пост',
                 author=cls.user,
                 group=cls.group,
             )
@@ -91,7 +91,7 @@ class PostPagesTests(TestCase):
             with self.subTest(url=url):
                 response = self.guest_client.get(url)
                 post = response.context['page_obj'][0]
-                self.assertEqual(post.text, 'Тестовый пост №1')
+                self.assertEqual(post.text, 'Тестовый пост')
                 self.assertEqual(post.author.username, 'test_user')
                 self.assertEqual(post.group.slug, 'test-slug')
 
@@ -101,7 +101,7 @@ class PostPagesTests(TestCase):
             reverse('posts:post_detail', kwargs={'post_id': 1})
         )
         post = response.context['post']
-        self.assertEqual(post.text, 'Тестовый пост №1')
+        self.assertEqual(post.text, 'Тестовый пост')
         self.assertEqual(post.author.username, 'test_user')
         self.assertEqual(post.group.slug, 'test-slug')
 
@@ -126,7 +126,7 @@ class PostPagesTests(TestCase):
             reverse('posts:post_edit', kwargs={'post_id': 1})
         )
         post = response.context['form'].instance
-        self.assertEqual(post.text, 'Тестовый пост №1')
+        self.assertEqual(post.text, 'Тестовый пост')
         self.assertEqual(post.author.username, 'test_user')
         self.assertEqual(post.group.slug, 'test-slug')
 
