@@ -1,9 +1,6 @@
-from datetime import timedelta
-
 from django.forms import fields
 from django.test import Client, TestCase
 from django.urls import reverse
-from django.utils import timezone
 
 from ..models import Group, Post, User
 
@@ -26,15 +23,15 @@ class PostPagesTests(TestCase):
             slug='empty-group',
             description='Тестовое описание',
         )
-        now = timezone.now()
-        for i in range(13):
-            post = Post.objects.create(
+        posts = [
+            Post(
                 text=f'Тестовый пост №{i + 1}',
                 author=cls.user,
                 group=cls.group,
             )
-            post.pub_date = now + timedelta(seconds=i - 13)
-            post.save()
+            for i in range(13)
+        ]
+        Post.objects.bulk_create(posts)
 
         cls.paginated_urls = {
             reverse('posts:index'): 'posts/index.html',
@@ -85,7 +82,7 @@ class PostPagesTests(TestCase):
             with self.subTest(url=url):
                 response = self.guest_client.get(url)
                 post = response.context['page_obj'][0]
-                self.assertEqual(post.text, 'Тестовый пост №13')
+                self.assertEqual(post.text, 'Тестовый пост №1')
                 self.assertEqual(post.author.username, 'test_user')
                 self.assertEqual(post.group.slug, 'test-slug')
 
