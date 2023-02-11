@@ -27,12 +27,12 @@ class PostURLTests(TestCase):
         )
         cls.urls_accessible_to_all = {
             '': 'posts/index.html',
-            '/group/test-slug/': 'posts/group_list.html',
-            '/profile/test_user/': 'posts/profile.html',
-            '/posts/1/': 'posts/post_detail.html',
+            f'/group/{cls.group.slug}/': 'posts/group_list.html',
+            f'/profile/{cls.user.username}/': 'posts/profile.html',
+            f'/posts/{cls.post.pk}/': 'posts/post_detail.html',
         }
         cls.urls_accessible_to_author = {
-            '/posts/1/edit/': 'posts/create_post.html',
+            f'/posts/{cls.post.pk}/edit/': 'posts/create_post.html',
             '/create/': 'posts/create_post.html',
         }
 
@@ -73,9 +73,9 @@ class PostURLTests(TestCase):
         не являющегося автором, на страницу поста.
         """
         response = self.authorized_client_nonauthor.get(
-            '/posts/1/edit/', follow=True
+            f'/posts/{PostURLTests.post.pk}/edit/', follow=True
         )
-        self.assertRedirects(response, '/posts/1/')
+        self.assertRedirects(response, f'/posts/{PostURLTests.post.pk}/')
 
     def test_urls_use_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
