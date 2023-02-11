@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.forms import fields
 from django.test import Client, TestCase
 from django.urls import reverse
@@ -23,13 +24,14 @@ class PostPagesTests(TestCase):
             slug='empty-group',
             description='Тестовое описание',
         )
+        cls.POSTS_CREATED = settings.POSTS_PER_PAGE + 3
         posts = [
             Post(
                 text=f'Тестовый пост №{i + 1}',
                 author=cls.user,
                 group=cls.group,
             )
-            for i in range(13)
+            for i in range(cls.POSTS_CREATED)
         ]
         Post.objects.bulk_create(posts)
 
@@ -67,14 +69,21 @@ class PostPagesTests(TestCase):
 
     def test_paginated_pages_show_correct_post_count(self):
         """Страницы с пагинатором выводят корректное кол-во постов."""
+        total = PostPagesTests.POSTS_CREATED
+        per_page = settings.POSTS_PER_PAGE
         for url in PostPagesTests.paginated_urls:
             with self.subTest(url=url):
                 response = self.guest_client.get(url)
                 posts = response.context['page_obj']
-                self.assertEqual(len(posts), 10)
+                num_posts_on_first_page = min(total, per_page)
+                self.assertEqual(len(posts), num_posts_on_first_page)
 
+                if total < per_page:
+                    return
                 response = self.guest_client.get(url + '?page=2')
-                self.assertEqual(len(response.context['page_obj']), 3)
+                posts = response.context['page_obj']
+                num_posts_on_second_page = min(total - per_page, per_page)
+                self.assertEqual(len(posts), num_posts_on_second_page)
 
     def test_paginated_pages_have_correct_context(self):
         """Страницы с пагинатором сформированы с правильным контекстом."""
