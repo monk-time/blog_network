@@ -31,7 +31,7 @@ class PostFormTests(TestCase):
         posts_count = Post.objects.count()
         form_data = {
             'text': 'Созданный через форму пост',
-            'group': PostFormTests.group.pk,
+            'group': str(PostFormTests.group.pk),
         }
         response = self.authorized_client.post(
             reverse('posts:post_create'), data=form_data, follow=True
@@ -46,7 +46,7 @@ class PostFormTests(TestCase):
         self.assertEqual(Post.objects.count(), posts_count + 1)
         self.assertTrue(
             Post.objects.filter(
-                text='Созданный через форму пост',
+                text=form_data['text'],
                 author=PostFormTests.user,
                 group=PostFormTests.group,
             ).exists()
@@ -56,7 +56,7 @@ class PostFormTests(TestCase):
         """При отправке валидной формы редактируется существующий пост."""
         form_data = {
             'text': 'Отредактированный пост',
-            'group': PostFormTests.group.pk,
+            'group': str(PostFormTests.group.pk),
         }
         response = self.authorized_client.post(
             reverse('posts:post_edit', kwargs={'post_id': 1}),
@@ -68,5 +68,5 @@ class PostFormTests(TestCase):
             reverse('posts:post_detail', kwargs={'post_id': 1}),
         )
         edited_post = Post.objects.get(id=1)
-        self.assertEquals(edited_post.text, 'Отредактированный пост')
+        self.assertEquals(edited_post.text, form_data['text'])
         self.assertEquals(edited_post.group, PostFormTests.group)
