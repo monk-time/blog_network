@@ -59,13 +59,17 @@ class PostFormTests(TestCase):
             'group': str(PostFormTests.group.pk),
         }
         response = self.authorized_client.post(
-            reverse('posts:post_edit', kwargs={'post_id': 1}),
+            reverse(
+                'posts:post_edit', kwargs={'post_id': PostFormTests.post.pk}
+            ),
             data=form_data,
             follow=True,
         )
         self.assertRedirects(
             response,
-            reverse('posts:post_detail', kwargs={'post_id': 1}),
+            reverse(
+                'posts:post_detail', kwargs={'post_id': PostFormTests.post.pk}
+            ),
         )
         edited_post = Post.objects.get(id=1)
         self.assertEquals(edited_post.text, form_data['text'])
