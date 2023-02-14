@@ -21,14 +21,14 @@
           {% include 'includes/nav_link.html' with path='about:tech' text='Технологии' %}
           {% if user.is_authenticated %}
           {% include 'includes/nav_link.html' with path='posts:post_create' text='Новая запись' %}
-          {% include 'includes/nav_link.html' with path='users:password_change' text='Изменить пароль' %}
-          {% include 'includes/nav_link.html' with path='users:logout' text='Выйти' %}
+          {% include 'includes/nav_link.html' with path='users:password_change' text='Изменить пароль' light=True %}
+          {% include 'includes/nav_link.html' with path='users:logout' text='Выйти' light=True %}
           <li>
             Пользователь: {{ user.username }}
           </li>
           {% else %}
-          {% include 'includes/nav_link.html' with path='users:login' text='Войти' %}
-          {% include 'includes/nav_link.html' with path='users:signup' text='Регистрация' %}
+          {% include 'includes/nav_link.html' with path='users:login' text='Войти' light=True %}
+          {% include 'includes/nav_link.html' with path='users:signup' text='Регистрация' light=True %}
           {% endif %}
           {% endwith %}
         </ul>

@@ -1,5 +1,5 @@
 <li class="nav-item">
-  <a class="nav-link link-light {% if view_name  == path %}active{% endif %}"
+  <a class="nav-link {% if light %}link-light{% endif %} {% if view_name == path %}active{% endif %}"
     href="{% url path %}">
     {{ text }}
   </a>
