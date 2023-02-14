@@ -71,6 +71,6 @@ class PostFormTests(TestCase):
                 'posts:post_detail', kwargs={'post_id': PostFormTests.post.pk}
             ),
         )
-        edited_post = Post.objects.get(id=1)
+        edited_post = Post.objects.get(id=PostFormTests.post.pk)
         self.assertEquals(edited_post.text, form_data['text'])
         self.assertEquals(edited_post.group, PostFormTests.group)
