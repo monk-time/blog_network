@@ -37,8 +37,6 @@ class PostURLTests(TestCase):
         }
 
     def setUp(self):
-        self.guest_client = Client()
-
         self.authorized_client = Client()
         self.authorized_client.force_login(PostURLTests.user)
 
@@ -51,7 +49,7 @@ class PostURLTests(TestCase):
         """Страницы доступны любому пользователю."""
         for url in PostURLTests.urls_accessible_to_all:
             with self.subTest(url=url):
-                response = self.guest_client.get(url)
+                response = self.client.get(url)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_urls_exist_author(self):
@@ -65,7 +63,7 @@ class PostURLTests(TestCase):
         """Страницы перенаправят анонимного пользователя на страницу логина."""
         for url in PostURLTests.urls_accessible_to_author:
             with self.subTest(url=url):
-                response = self.guest_client.get(url, follow=True)
+                response = self.client.get(url, follow=True)
                 self.assertRedirects(response, f'/auth/login/?next={url}')
 
     def test_post_edit_url_redirects_nonauthor(self):
@@ -90,5 +88,5 @@ class PostURLTests(TestCase):
 
     def test_unexisting_url_doesnt_exist(self):
         """Несуществующая страница не существует."""
-        response = self.guest_client.get('/unexisting_page/')
+        response = self.client.get('/unexisting_page/')
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)

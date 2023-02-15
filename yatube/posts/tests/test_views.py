@@ -31,7 +31,6 @@ class PostPagesTests(TestCase):
         )
 
     def setUp(self):
-        self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(PostPagesTests.user)
 
@@ -68,12 +67,12 @@ class PostPagesTests(TestCase):
 
     def test_index_has_correct_context(self):
         """Главная страница сформирована с правильным контекстом."""
-        response = self.guest_client.get(reverse('posts:index'))
+        response = self.client.get(reverse('posts:index'))
         self.post_check(response.context['page_obj'][0])
 
     def test_group_list_has_correct_context(self):
         """Страница группы сформирована с правильным контекстом."""
-        response = self.guest_client.get(
+        response = self.client.get(
             reverse(
                 'posts:group_list', kwargs={'slug': PostPagesTests.group.slug}
             )
@@ -83,7 +82,7 @@ class PostPagesTests(TestCase):
 
     def test_profile_has_correct_context(self):
         """Страница профиля сформирована с правильным контекстом."""
-        response = self.guest_client.get(
+        response = self.client.get(
             reverse(
                 'posts:profile',
                 kwargs={'username': PostPagesTests.user.username},
@@ -94,7 +93,7 @@ class PostPagesTests(TestCase):
 
     def test_post_detail_has_correct_context(self):
         """Страница поста сформирована с правильным контекстом."""
-        response = self.guest_client.get(
+        response = self.client.get(
             reverse(
                 'posts:post_detail',
                 kwargs={'post_id': PostPagesTests.post.pk},
@@ -129,7 +128,7 @@ class PostPagesTests(TestCase):
 
     def test_post_group_contains_only_correct_posts(self):
         """Посты не попают в группу, для которой они не предназначены."""
-        response = self.guest_client.get(
+        response = self.client.get(
             reverse(
                 'posts:group_list',
                 kwargs={'slug': PostPagesTests.group_without_posts.slug},
