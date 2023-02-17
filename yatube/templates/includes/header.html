@@ -23,7 +23,7 @@
           {% include 'includes/nav_link.html' with path='posts:post_create' text='Новая запись' %}
           {% include 'includes/nav_link.html' with path='users:password_change' text='Изменить пароль' light=True %}
           {% include 'includes/nav_link.html' with path='users:logout' text='Выйти' light=True %}
-          <li>
+          <li class="navbar-text">
             Пользователь: {{ user.username }}
           </li>
           {% else %}
