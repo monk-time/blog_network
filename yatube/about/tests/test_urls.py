@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from django.test import Client, TestCase
+from django.test import TestCase
 
 
 class AboutURLTests(TestCase):
@@ -12,12 +12,16 @@ class AboutURLTests(TestCase):
             '/about/tech/': 'about/tech.html',
         }
 
-    def setUp(self):
-        self.guest_client = Client()
-
-    def test_about_urls_exist(self):
+    def test_urls_exist(self):
         """Страницы /about/.../ доступны любому пользователю."""
         for url in AboutURLTests.urls:
             with self.subTest(url=url):
-                response = self.guest_client.get(url)
+                response = self.client.get(url)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_urls_use_correct_template(self):
+        """URL-адреса используют соответствующие шаблоны."""
+        for url, template in AboutURLTests.urls.items():
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertTemplateUsed(response, template)

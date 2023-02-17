@@ -28,7 +28,6 @@ class PostURLTests(TestCase):
         )
 
     def setUp(self):
-        self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(PostURLTests.user)
         self.authorized_client_nonauthor = Client()
@@ -39,7 +38,7 @@ class PostURLTests(TestCase):
         URLData = namedtuple(
             'URL',
             ('url', 'client', 'code', 'redirect_url'),
-            defaults=(self.guest_client, HTTPStatus.OK, None),
+            defaults=(self.client, HTTPStatus.OK, None),
         )
         self.urls = [
             URLData(url=''),
@@ -93,7 +92,7 @@ class PostURLTests(TestCase):
                 self.assertRedirects(response, url_data.redirect_url)
 
     def test_urls_use_correct_template(self):
-        """URL-адрес использует соответствующий шаблон."""
+        """URL-адреса используют соответствующие шаблоны."""
         templates_urls = {
             '': 'posts/index.html',
             f'/group/{PostURLTests.group.slug}/': 'posts/group_list.html',

@@ -27,8 +27,6 @@ class UserURLTests(TestCase):
         }
 
     def setUp(self):
-        self.guest_client = Client()
-
         self.authorized_client = Client()
         self.authorized_client.force_login(UserURLTests.user)
 
@@ -36,7 +34,7 @@ class UserURLTests(TestCase):
         """Страницы доступны любому пользователю."""
         for url in UserURLTests.urls_accessible_to_all:
             with self.subTest(url=url):
-                response = self.guest_client.get(url)
+                response = self.client.get(url)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_urls_exist_authorized(self):
@@ -50,11 +48,11 @@ class UserURLTests(TestCase):
         """Страницы перенаправят анонимного пользователя на страницу логина."""
         for url in UserURLTests.urls_accessible_to_authorized:
             with self.subTest(url=url):
-                response = self.guest_client.get(url, follow=True)
+                response = self.client.get(url, follow=True)
                 self.assertRedirects(response, f'/auth/login/?next={url}')
 
     def test_urls_use_correct_template(self):
-        """URL-адрес использует соответствующий шаблон."""
+        """URL-адреса используют соответствующие шаблоны."""
         templates_urls = {
             **UserURLTests.urls_accessible_to_authorized,
             **UserURLTests.urls_accessible_to_all,

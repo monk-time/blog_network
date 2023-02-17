@@ -1,4 +1,4 @@
-from django.test import Client, TestCase
+from django.test import TestCase
 from django.urls import reverse
 
 from posts.models import User
@@ -17,12 +17,9 @@ class UserFormTests(TestCase):
             'password2': 'testpassword',
         }
 
-    def setUp(self):
-        self.guest_client = Client()
-
     def test_user_signing_up_creates_new_user(self):
         users_count = User.objects.count()
-        response = self.guest_client.post(
+        response = self.client.post(
             reverse('users:signup'), data=UserFormTests.form_data, follow=True
         )
         self.assertRedirects(response, reverse('posts:index'))
@@ -30,11 +27,9 @@ class UserFormTests(TestCase):
         self.assertTrue(User.objects.filter(username='test_user').exists())
 
     def test_user_cant_signup_with_registered_email(self):
-        self.guest_client.post(
-            reverse('users:signup'), data=UserFormTests.form_data
-        )
+        self.client.post(reverse('users:signup'), data=UserFormTests.form_data)
         users_count = User.objects.count()
-        response = self.guest_client.post(
+        response = self.client.post(
             reverse('users:signup'), data=UserFormTests.form_data
         )
         self.assertEqual(User.objects.count(), users_count)

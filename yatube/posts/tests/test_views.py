@@ -3,10 +3,11 @@ from django.forms import fields
 from django.test import Client, TestCase
 from django.urls import reverse
 
+from ..forms import PostForm
 from ..models import Group, Post, User
 
 
-class PostPagesTests(TestCase):
+class PostViewTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -32,25 +33,26 @@ class PostPagesTests(TestCase):
 
     def setUp(self):
         self.authorized_client = Client()
-        self.authorized_client.force_login(PostPagesTests.user)
+        self.authorized_client.force_login(PostViewTests.user)
 
     def test_pages_use_correct_template(self):
-        """URL-адрес использует соответствующий шаблон."""
+        """View-функции используют соответствующие шаблоны."""
         urls = {
             reverse('posts:index'): 'posts/index.html',
             reverse(
-                'posts:group_list', kwargs={'slug': PostPagesTests.group.slug}
+                'posts:group_list', kwargs={'slug': PostViewTests.group.slug}
             ): 'posts/group_list.html',
             reverse(
                 'posts:profile',
-                kwargs={'username': PostPagesTests.user.username},
+                kwargs={'username': PostViewTests.user.username},
             ): 'posts/profile.html',
             reverse(
-                'posts:post_detail', kwargs={'post_id': PostPagesTests.post.pk}
+                'posts:post_detail',
+                kwargs={'post_id': PostViewTests.post.pk},
             ): 'posts/post_detail.html',
             reverse('posts:post_create'): 'posts/create_post.html',
             reverse(
-                'posts:post_edit', kwargs={'post_id': PostPagesTests.post.pk}
+                'posts:post_edit', kwargs={'post_id': PostViewTests.post.pk}
             ): 'posts/create_post.html',
         }
         for url, template in urls.items():
@@ -60,10 +62,10 @@ class PostPagesTests(TestCase):
 
     def post_check(self, post):
         """Проверить, что объект поста равен изначальному посту."""
-        self.assertEqual(post.pk, PostPagesTests.post.pk)
-        self.assertEqual(post.text, PostPagesTests.post.text)
-        self.assertEqual(post.author.username, PostPagesTests.user.username)
-        self.assertEqual(post.group.slug, PostPagesTests.group.slug)
+        self.assertEqual(post.pk, PostViewTests.post.pk)
+        self.assertEqual(post.text, PostViewTests.post.text)
+        self.assertEqual(post.author.username, PostViewTests.user.username)
+        self.assertEqual(post.group.slug, PostViewTests.group.slug)
 
     def test_index_has_correct_context(self):
         """Главная страница сформирована с правильным контекстом."""
@@ -74,29 +76,29 @@ class PostPagesTests(TestCase):
         """Страница группы сформирована с правильным контекстом."""
         response = self.client.get(
             reverse(
-                'posts:group_list', kwargs={'slug': PostPagesTests.group.slug}
+                'posts:group_list', kwargs={'slug': PostViewTests.group.slug}
             )
         )
         self.post_check(response.context['page_obj'][0])
-        self.assertEqual(response.context['group'], PostPagesTests.group)
+        self.assertEqual(response.context['group'], PostViewTests.group)
 
     def test_profile_has_correct_context(self):
         """Страница профиля сформирована с правильным контекстом."""
         response = self.client.get(
             reverse(
                 'posts:profile',
-                kwargs={'username': PostPagesTests.user.username},
+                kwargs={'username': PostViewTests.user.username},
             )
         )
         self.post_check(response.context['page_obj'][0])
-        self.assertEqual(response.context['author'], PostPagesTests.user)
+        self.assertEqual(response.context['author'], PostViewTests.user)
 
     def test_post_detail_has_correct_context(self):
         """Страница поста сформирована с правильным контекстом."""
         response = self.client.get(
             reverse(
                 'posts:post_detail',
-                kwargs={'post_id': PostPagesTests.post.pk},
+                kwargs={'post_id': PostViewTests.post.pk},
             )
         )
         self.post_check(response.context['post'])
@@ -109,6 +111,7 @@ class PostPagesTests(TestCase):
             'group': fields.ChoiceField,
         }
 
+        self.assertIsInstance(response.context['form'], PostForm)
         for value, expected in form_fields.items():
             with self.subTest(value=value):
                 form_field = response.context['form'].fields[value]
@@ -121,7 +124,7 @@ class PostPagesTests(TestCase):
         response = self.authorized_client.get(
             reverse(
                 'posts:post_edit',
-                kwargs={'post_id': PostPagesTests.post.pk},
+                kwargs={'post_id': PostViewTests.post.pk},
             )
         )
         self.post_check(response.context['form'].instance)
@@ -131,14 +134,14 @@ class PostPagesTests(TestCase):
         response = self.client.get(
             reverse(
                 'posts:group_list',
-                kwargs={'slug': PostPagesTests.group_without_posts.slug},
+                kwargs={'slug': PostViewTests.group_without_posts.slug},
             )
         )
         posts = response.context['page_obj']
         self.assertEqual(len(posts), 0)
 
 
-class PostPaginatorTests(TestCase):
+class PostsPaginatorTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -166,17 +169,17 @@ class PostPaginatorTests(TestCase):
 
     def test_paginated_pages_show_correct_post_count(self):
         """Страницы с пагинатором выводят корректное кол-во постов."""
-        total = PostPaginatorTests.POSTS_CREATED
+        total = PostsPaginatorTests.POSTS_CREATED
         per_page = settings.POSTS_PER_PAGE
         paginated_urls = [
             reverse('posts:index'),
             reverse(
                 'posts:group_list',
-                kwargs={'slug': PostPaginatorTests.group.slug},
+                kwargs={'slug': PostsPaginatorTests.group.slug},
             ),
             reverse(
                 'posts:profile',
-                kwargs={'username': PostPaginatorTests.user.username},
+                kwargs={'username': PostsPaginatorTests.user.username},
             ),
         ]
         for url in paginated_urls:
