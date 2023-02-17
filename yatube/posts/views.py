@@ -47,8 +47,7 @@ def post_create(request: HttpRequest):
 
     form.save()
     return redirect(
-        'posts:profile',
-        username=request.user.username,  # type: ignore
+        'posts:profile', username=request.user.username  # type: ignore
     )
 
 
@@ -66,3 +65,15 @@ def post_edit(request: HttpRequest, post_id: int):
 
     form.save()
     return redirect('posts:post_detail', post_id=post_id)
+
+
+@login_required
+def post_delete(request: HttpRequest, post_id: int):
+    post = get_object_or_404(Post, pk=post_id)
+    if request.user != post.author:
+        return redirect('posts:post_detail', post_id=post_id)
+
+    post.delete()
+    return redirect(
+        'posts:profile', username=request.user.username  # type: ignore
+    )

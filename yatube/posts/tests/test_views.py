@@ -15,6 +15,9 @@ class PostViewTests(TestCase):
         cls.user = User.objects.create_user(  # type: ignore
             username='test_user'
         )
+        cls.user_nonauthor = User.objects.create_user(  # type: ignore
+            username='test_user2'
+        )
         cls.group = Group.objects.create(
             title='Тестовая группа',
             slug='test-slug',
@@ -30,10 +33,18 @@ class PostViewTests(TestCase):
             author=cls.user,
             group=cls.group,
         )
+        cls.post_to_delete = Post.objects.create(
+            text='Тестовый пост для удаления',
+            author=cls.user,
+        )
 
     def setUp(self):
         self.authorized_client = Client()
         self.authorized_client.force_login(PostViewTests.user)
+        self.authorized_client_nonauthor = Client()
+        self.authorized_client_nonauthor.force_login(
+            PostViewTests.user_nonauthor
+        )
 
     def test_pages_use_correct_template(self):
         """View-функции используют соответствующие шаблоны."""
@@ -139,6 +150,32 @@ class PostViewTests(TestCase):
         )
         posts = response.context['page_obj']
         self.assertEqual(len(posts), 0)
+
+    def test_post_can_be_deleted_by_author(self):
+        """После удаления автором пост удаляется из базы данных."""
+        posts_count = Post.objects.count()
+        self.authorized_client.get(
+            reverse(
+                'posts:post_delete',
+                kwargs={'post_id': PostViewTests.post_to_delete.pk},
+            )
+        )
+        self.assertEqual(Post.objects.count(), posts_count - 1)
+        self.assertFalse(
+            Post.objects.filter(pk=PostViewTests.post_to_delete.pk).exists()
+        )
+
+    def test_post_cant_be_deleted_not_by_author(self):
+        """При попытке удаления неавтором пост остаётся в базе данных."""
+        posts_count = Post.objects.count()
+        self.authorized_client_nonauthor.get(
+            reverse(
+                'posts:post_delete',
+                kwargs={'post_id': PostViewTests.post.pk},
+            )
+        )
+        self.assertEqual(Post.objects.count(), posts_count)
+        self.assertTrue(Post.objects.filter(pk=PostViewTests.post.pk).exists())
 
 
 class PostsPaginatorTests(TestCase):

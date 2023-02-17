@@ -26,6 +26,10 @@ class PostURLTests(TestCase):
             author=cls.user,
             group=cls.group,
         )
+        cls.post_to_delete = Post.objects.create(
+            text='Тестовый пост для удаления',
+            author=cls.user,
+        )
 
     def setUp(self):
         self.authorized_client = Client()
@@ -65,6 +69,25 @@ class PostURLTests(TestCase):
             ),
             URLData(
                 url=f'/posts/{self.post.pk}/edit/',
+                client=self.authorized_client_nonauthor,
+                code=HTTPStatus.FOUND,
+                redirect_url=f'/posts/{self.post.pk}/',
+            ),
+            URLData(
+                url=f'/posts/{self.post_to_delete.pk}/delete/',
+                client=self.authorized_client,
+                code=HTTPStatus.FOUND,
+                redirect_url=f'/profile/{self.user.username}/',
+            ),
+            URLData(
+                url=f'/posts/{self.post.pk}/delete/',
+                code=HTTPStatus.FOUND,
+                redirect_url=(
+                    f'/auth/login/?next=/posts/{self.post.pk}/delete/'
+                ),
+            ),
+            URLData(
+                url=f'/posts/{self.post.pk}/delete/',
                 client=self.authorized_client_nonauthor,
                 code=HTTPStatus.FOUND,
                 redirect_url=f'/posts/{self.post.pk}/',
