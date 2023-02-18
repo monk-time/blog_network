@@ -33,10 +33,6 @@ class PostViewTests(TestCase):
             author=cls.user,
             group=cls.group,
         )
-        cls.post_to_delete = Post.objects.create(
-            text='Тестовый пост для удаления',
-            author=cls.user,
-        )
 
     def setUp(self):
         self.authorized_client = Client()
@@ -153,17 +149,19 @@ class PostViewTests(TestCase):
 
     def test_post_can_be_deleted_by_author(self):
         """После удаления автором пост удаляется из базы данных."""
+        post_to_delete = Post.objects.create(
+            text='Тестовый пост для удаления',
+            author=PostViewTests.user,
+        )
         posts_count = Post.objects.count()
         self.authorized_client.get(
             reverse(
                 'posts:post_delete',
-                kwargs={'post_id': PostViewTests.post_to_delete.pk},
+                kwargs={'post_id': post_to_delete.pk},
             )
         )
         self.assertEqual(Post.objects.count(), posts_count - 1)
-        self.assertFalse(
-            Post.objects.filter(pk=PostViewTests.post_to_delete.pk).exists()
-        )
+        self.assertFalse(Post.objects.filter(pk=post_to_delete.pk).exists())
 
     def test_post_cant_be_deleted_not_by_author(self):
         """При попытке удаления неавтором пост остаётся в базе данных."""
