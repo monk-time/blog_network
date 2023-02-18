@@ -55,7 +55,7 @@ def post_create(request: HttpRequest):
 def post_edit(request: HttpRequest, post_id: int):
     post = get_object_or_404(Post, pk=post_id)
     if request.user != post.author:
-        return redirect('posts:post_detail', post_id=post_id)
+        return redirect(post)
 
     form = PostForm(request.POST or None, instance=post)
     if not form.is_valid():
@@ -64,14 +64,14 @@ def post_edit(request: HttpRequest, post_id: int):
         )
 
     form.save()
-    return redirect('posts:post_detail', post_id=post_id)
+    return redirect(post)
 
 
 @login_required
 def post_delete(request: HttpRequest, post_id: int):
     post = get_object_or_404(Post, pk=post_id)
     if request.user != post.author:
-        return redirect('posts:post_detail', post_id=post_id)
+        return redirect(post)
 
     post.delete()
     return redirect(

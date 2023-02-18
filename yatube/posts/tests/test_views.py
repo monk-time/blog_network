@@ -63,7 +63,7 @@ class PostViewTests(TestCase):
             ): 'posts/create_post.html',
         }
         for url, template in urls.items():
-            with self.subTest(template=template):
+            with self.subTest(url=url, template=template):
                 response = self.authorized_client.get(url)
                 self.assertTemplateUsed(response, template)
 
@@ -102,12 +102,7 @@ class PostViewTests(TestCase):
 
     def test_post_detail_has_correct_context(self):
         """Страница поста сформирована с правильным контекстом."""
-        response = self.client.get(
-            reverse(
-                'posts:post_detail',
-                kwargs={'post_id': PostViewTests.post.pk},
-            )
-        )
+        response = self.client.get(PostViewTests.post.get_absolute_url())
         self.post_check(response.context['post'])
 
     def test_post_create_form_has_correct_context(self):

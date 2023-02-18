@@ -12,14 +12,14 @@
       {% if show_group and post.group %}
         <li>
           Группа: {{ post.group.title }}
-          <a href="{% url 'posts:group_list' post.group.slug %}">
+          <a href="{{ post.group.get_absolute_url }}">
             все записи группы
           </a>
         </li>
       {% endif %}
   </ul>
   <p>{{ post.text|linebreaksbr }}</p>
-  <a href="{% url 'posts:post_detail' post.id %}">
+  <a href="{{ post.get_absolute_url }}">
     подробная информация
   </a>
 </article>
