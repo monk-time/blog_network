@@ -12,21 +12,11 @@ class PostViewTests(TestCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        cls.user = User.objects.create_user(  # type: ignore
-            username='test_user'
-        )
-        cls.user_nonauthor = User.objects.create_user(  # type: ignore
-            username='test_user2'
-        )
+        cls.user = User.objects.create_user(username='user1')  # type: ignore
+        cls.user2 = User.objects.create_user(username='user2')  # type: ignore
         cls.group = Group.objects.create(
-            title='Тестовая группа',
-            slug='test-slug',
-            description='Тестовое описание',
-        )
-        cls.group_without_posts = Group.objects.create(
-            title='Группа без постов',
-            slug='empty-group',
-            description='Тестовое описание',
+            title='Группа 1',
+            slug='slug1',
         )
         cls.post = Post.objects.create(
             text='Тестовый пост',
@@ -37,10 +27,8 @@ class PostViewTests(TestCase):
     def setUp(self):
         self.authorized_client = Client()
         self.authorized_client.force_login(PostViewTests.user)
-        self.authorized_client_nonauthor = Client()
-        self.authorized_client_nonauthor.force_login(
-            PostViewTests.user_nonauthor
-        )
+        self.authorized_client_2 = Client()
+        self.authorized_client_2.force_login(PostViewTests.user2)
 
     def test_pages_use_correct_template(self):
         """View-функции используют соответствующие шаблоны."""
@@ -131,16 +119,44 @@ class PostViewTests(TestCase):
         )
         self.post_check(response.context['form'].instance)
 
-    def test_post_group_contains_only_correct_posts(self):
-        """Посты не попают в группу, для которой они не предназначены."""
-        response = self.client.get(
-            reverse(
-                'posts:group_list',
-                kwargs={'slug': PostViewTests.group_without_posts.slug},
-            )
+    def test_pages_contain_only_correct_posts(self):
+        """Посты попают только в нужную группу/профиль."""
+        post_no_group = Post.objects.create(author=self.user)
+        post_by_another_user = Post.objects.create(
+            author=self.user2, group=self.group
         )
-        posts = response.context['page_obj']
-        self.assertEqual(len(posts), 0)
+        group_with_no_posts = Group.objects.create(
+            title='Группа 2', slug='slug2'
+        )
+        expected_posts_by_url = {
+            reverse('posts:index'): [
+                PostViewTests.post,
+                post_by_another_user,
+                post_no_group,
+            ],
+            reverse(
+                'posts:group_list', kwargs={'slug': PostViewTests.group.slug}
+            ): [PostViewTests.post, post_by_another_user],
+            reverse(
+                'posts:group_list', kwargs={'slug': group_with_no_posts.slug}
+            ): [],
+            reverse(
+                'posts:profile',
+                kwargs={'username': PostViewTests.user.username},
+            ): [PostViewTests.post, post_no_group],
+            reverse(
+                'posts:profile',
+                kwargs={'username': PostViewTests.user2.username},
+            ): [post_by_another_user],
+        }
+
+        for url, expected_posts in expected_posts_by_url.items():
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                posts = response.context['page_obj']
+                self.assertEqual(len(posts), len(expected_posts))
+                for post in posts:
+                    self.assertIn(post, expected_posts)
 
     def test_post_can_be_deleted_by_author(self):
         """После удаления автором пост удаляется из базы данных."""
@@ -158,10 +174,10 @@ class PostViewTests(TestCase):
         self.assertEqual(Post.objects.count(), posts_count - 1)
         self.assertFalse(Post.objects.filter(pk=post_to_delete.pk).exists())
 
-    def test_post_cant_be_deleted_not_by_author(self):
+    def test_post_cant_be_deleted_by_wrong_user(self):
         """При попытке удаления неавтором пост остаётся в базе данных."""
         posts_count = Post.objects.count()
-        self.authorized_client_nonauthor.get(
+        self.authorized_client_2.get(
             reverse(
                 'posts:post_delete',
                 kwargs={'post_id': PostViewTests.post.pk},
