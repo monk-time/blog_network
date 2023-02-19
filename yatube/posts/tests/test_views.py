@@ -35,19 +35,17 @@ class PostViewTests(TestCase):
         urls = {
             reverse('posts:index'): 'posts/index.html',
             reverse(
-                'posts:group_list', kwargs={'slug': PostViewTests.group.slug}
+                'posts:group_list', args=[PostViewTests.group.slug]
             ): 'posts/group_list.html',
             reverse(
-                'posts:profile',
-                kwargs={'username': PostViewTests.user.username},
+                'posts:profile', args=[PostViewTests.user.username]
             ): 'posts/profile.html',
             reverse(
-                'posts:post_detail',
-                kwargs={'post_id': PostViewTests.post.pk},
+                'posts:post_detail', args=[PostViewTests.post.pk]
             ): 'posts/post_detail.html',
             reverse('posts:post_create'): 'posts/create_post.html',
             reverse(
-                'posts:post_edit', kwargs={'post_id': PostViewTests.post.pk}
+                'posts:post_edit', args=[PostViewTests.post.pk]
             ): 'posts/create_post.html',
         }
         for url, template in urls.items():
@@ -70,9 +68,7 @@ class PostViewTests(TestCase):
     def test_group_list_has_correct_context(self):
         """Страница группы сформирована с правильным контекстом."""
         response = self.client.get(
-            reverse(
-                'posts:group_list', kwargs={'slug': PostViewTests.group.slug}
-            )
+            reverse('posts:group_list', args=[PostViewTests.group.slug])
         )
         self.post_check(response.context['page_obj'][0])
         self.assertEqual(response.context['group'], PostViewTests.group)
@@ -80,10 +76,7 @@ class PostViewTests(TestCase):
     def test_profile_has_correct_context(self):
         """Страница профиля сформирована с правильным контекстом."""
         response = self.client.get(
-            reverse(
-                'posts:profile',
-                kwargs={'username': PostViewTests.user.username},
-            )
+            reverse('posts:profile', args=[PostViewTests.user.username])
         )
         self.post_check(response.context['page_obj'][0])
         self.assertEqual(response.context['author'], PostViewTests.user)
@@ -112,10 +105,7 @@ class PostViewTests(TestCase):
         контекстом.
         """
         response = self.authorized_client.get(
-            reverse(
-                'posts:post_edit',
-                kwargs={'post_id': PostViewTests.post.pk},
-            )
+            reverse('posts:post_edit', args=[PostViewTests.post.pk])
         )
         self.post_check(response.context['form'].instance)
 
@@ -134,20 +124,18 @@ class PostViewTests(TestCase):
                 post_by_another_user,
                 post_no_group,
             ],
-            reverse(
-                'posts:group_list', kwargs={'slug': PostViewTests.group.slug}
-            ): [PostViewTests.post, post_by_another_user],
-            reverse(
-                'posts:group_list', kwargs={'slug': group_with_no_posts.slug}
-            ): [],
-            reverse(
-                'posts:profile',
-                kwargs={'username': PostViewTests.user.username},
-            ): [PostViewTests.post, post_no_group],
-            reverse(
-                'posts:profile',
-                kwargs={'username': PostViewTests.user2.username},
-            ): [post_by_another_user],
+            reverse('posts:group_list', args=[PostViewTests.group.slug]): [
+                PostViewTests.post,
+                post_by_another_user,
+            ],
+            reverse('posts:group_list', args=[group_with_no_posts.slug]): [],
+            reverse('posts:profile', args=[PostViewTests.user.username]): [
+                PostViewTests.post,
+                post_no_group,
+            ],
+            reverse('posts:profile', args=[PostViewTests.user2.username]): [
+                post_by_another_user
+            ],
         }
 
         for url, expected_posts in expected_posts_by_url.items():
@@ -166,10 +154,7 @@ class PostViewTests(TestCase):
         )
         posts_count = Post.objects.count()
         self.authorized_client.get(
-            reverse(
-                'posts:post_delete',
-                kwargs={'post_id': post_to_delete.pk},
-            )
+            reverse('posts:post_delete', args=[post_to_delete.pk])
         )
         self.assertEqual(Post.objects.count(), posts_count - 1)
         self.assertFalse(Post.objects.filter(pk=post_to_delete.pk).exists())
@@ -178,10 +163,7 @@ class PostViewTests(TestCase):
         """При попытке удаления неавтором пост остаётся в базе данных."""
         posts_count = Post.objects.count()
         self.authorized_client_2.get(
-            reverse(
-                'posts:post_delete',
-                kwargs={'post_id': PostViewTests.post.pk},
-            )
+            reverse('posts:post_delete', args=[PostViewTests.post.pk])
         )
         self.assertEqual(Post.objects.count(), posts_count)
         self.assertTrue(Post.objects.filter(pk=PostViewTests.post.pk).exists())
@@ -202,11 +184,7 @@ class PostsPaginatorTests(TestCase):
         )
         cls.POSTS_CREATED = settings.POSTS_PER_PAGE + 3
         posts = [
-            Post(
-                text='Тестовый пост',
-                author=cls.user,
-                group=cls.group,
-            )
+            Post(text='Тестовый пост', author=cls.user, group=cls.group)
             for _ in range(cls.POSTS_CREATED)
         ]
         Post.objects.bulk_create(posts)
@@ -219,14 +197,8 @@ class PostsPaginatorTests(TestCase):
         per_page = settings.POSTS_PER_PAGE
         paginated_urls = [
             reverse('posts:index'),
-            reverse(
-                'posts:group_list',
-                kwargs={'slug': PostsPaginatorTests.group.slug},
-            ),
-            reverse(
-                'posts:profile',
-                kwargs={'username': PostsPaginatorTests.user.username},
-            ),
+            reverse('posts:group_list', args=[PostsPaginatorTests.group.slug]),
+            reverse('posts:profile', args=[PostsPaginatorTests.user.username]),
         ]
         for url in paginated_urls:
             with self.subTest(url=url):
