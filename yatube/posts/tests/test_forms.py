@@ -62,5 +62,5 @@ class PostFormTests(TestCase):
         )
         self.assertRedirects(response, PostFormTests.post.get_absolute_url())
         edited_post = Post.objects.get(id=PostFormTests.post.pk)
-        self.assertEquals(edited_post.text, form_data['text'])
-        self.assertEquals(edited_post.group, PostFormTests.group)
+        self.assertEqual(edited_post.text, form_data['text'])
+        self.assertEqual(edited_post.group, PostFormTests.group)
