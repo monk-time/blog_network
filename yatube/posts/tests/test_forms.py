@@ -51,6 +51,7 @@ class PostFormTests(TestCase):
 
     def test_post_form_edits_existing_post(self):
         """При отправке валидной формы редактируется существующий пост."""
+        posts_count = Post.objects.count()
         form_data = {
             'text': 'Отредактированный пост',
             'group': str(PostFormTests.group.pk),
@@ -61,6 +62,7 @@ class PostFormTests(TestCase):
             follow=True,
         )
         self.assertRedirects(response, PostFormTests.post.get_absolute_url())
-        edited_post = Post.objects.get(id=PostFormTests.post.pk)
-        self.assertEqual(edited_post.text, form_data['text'])
-        self.assertEqual(edited_post.group, PostFormTests.group)
+        self.assertEqual(Post.objects.count(), posts_count)
+        PostFormTests.post.refresh_from_db()
+        self.assertEqual(PostFormTests.post.text, form_data['text'])
+        self.assertEqual(PostFormTests.post.group, PostFormTests.group)
