@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
 {% block title %}
-  Последние обновления на сайте
+  Ваши подписки
 {% endblock %}
 
 {% block content %}
-  <h1>Последние обновления на сайте</h1>
+  <h1>Ваши подписки</h1>
   {% include 'posts/includes/switcher.html' %}
   {% for post in page_obj %}
     {% include 'posts/includes/post.html' with show_group=True %}

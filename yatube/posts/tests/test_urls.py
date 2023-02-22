@@ -110,6 +110,16 @@ class PostURLTests(TestCase):
                 url='/nonexistent_page/',
                 code=HTTPStatus.NOT_FOUND,
             ),
+            URLData(
+                url='/follow/',
+                client=self.authorized_client,
+            ),
+            URLData(
+                url=f'/profile/{self.user.username}/follow/',
+                client=self.authorized_client,
+                code=HTTPStatus.FOUND,
+                redirect_url=f'/profile/{self.user.username}/'
+            ),
         ]
 
         cache.clear()
@@ -139,6 +149,7 @@ class PostURLTests(TestCase):
             f'/posts/{PostURLTests.post.pk}/': 'posts/post_detail.html',
             f'/posts/{PostURLTests.post.pk}/edit/': 'posts/create_post.html',
             '/create/': 'posts/create_post.html',
+            '/follow/': 'posts/follow.html',
             '/nonexistent_page/': 'core/404.html',
         }
         for url, template in templates_urls.items():
@@ -150,5 +161,4 @@ class PostURLTests(TestCase):
         """При отправке формы без CSRF-токена ошибка с нужным шаблоном."""
         client_csrf = Client(enforce_csrf_checks=True)
         response = client_csrf.post('/create/', data={'text': 'text'})
-        print(response.status_code)
         self.assertTemplateUsed(response, 'core/403csrf.html')

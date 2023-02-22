@@ -9,7 +9,7 @@ from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from ..forms import PostForm
-from ..models import Comment, Group, Post, User
+from ..models import Comment, Follow, Group, Post, User
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
@@ -219,6 +219,41 @@ class PostViewTests(TestCase):
         cache.clear()
         noncached_response = self.client.get(reverse('posts:index'))
         self.assertNotEqual(first_response.content, noncached_response.content)
+
+    def test_user_can_subscribe_and_unsubscribe(self):
+        """Юзер может подписаться на других юзеров и удалять их из подписок."""
+        follow_count = Follow.objects.filter(user=PostViewTests.user).count()
+        self.assertEqual(follow_count, 0)
+        self.authorized_client.get(
+            reverse('posts:profile_follow', args=[PostViewTests.user2])
+        )
+        follow_count = Follow.objects.filter(user=PostViewTests.user).count()
+        self.assertEqual(follow_count, 1)
+        self.assertTrue(
+            Follow.objects.filter(
+                user=PostViewTests.user, author=PostViewTests.user2
+            ).exists()
+        )
+        self.authorized_client.get(
+            reverse('posts:profile_unfollow', args=[PostViewTests.user2])
+        )
+        follow_count = Follow.objects.filter(user=PostViewTests.user).count()
+        self.assertEqual(follow_count, 0)
+
+    def test_new_posts_appear_on_subscription_page(self):
+        """Новая запись появляется в ленте только тех, кто на него подписан."""
+        Follow.objects.create(
+            user=PostViewTests.user, author=PostViewTests.user2
+        )
+        post_by_subscribed_user = Post.objects.create(
+            author=PostViewTests.user2, text='пост'
+        )
+        response = self.authorized_client.get(reverse('posts:follow_index'))
+        self.assertEqual(
+            response.context['page_obj'][0], post_by_subscribed_user
+        )
+        response = self.authorized_client_2.get(reverse('posts:follow_index'))
+        self.assertEqual(len(response.context['page_obj']), 0)
 
 
 class PostsPaginatorTests(TestCase):

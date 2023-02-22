@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
 
 from .forms import CommentForm, PostForm
-from .models import Group, Post, User
+from .models import Follow, Group, Post, User
 from .utils import paginate
 
 
@@ -26,11 +26,16 @@ def group_posts(request: HttpRequest, slug: str):
 
 
 def profile(request: HttpRequest, username: str):
-    user = get_object_or_404(User, username=username)
-    posts = user.posts.select_related('group')  # type: ignore
+    author = get_object_or_404(User, username=username)
+    posts = author.posts.select_related('group')  # type: ignore
+    following = (
+        request.user.is_authenticated
+        and Follow.objects.filter(user=request.user, author=author).exists()
+    )
     context = {
-        'author': user,
+        'author': author,
         'page_obj': paginate(request, posts),
+        'following': following,
     }
     return render(request, 'posts/profile.html', context)
 
@@ -104,3 +109,30 @@ def add_comment(request, post_id):
         comment.post = post
         comment.save()
     return redirect(post)
+
+
+@login_required
+def follow_index(request):
+    subscribed_to = [follow.author for follow in request.user.follower.all()]
+    posts = Post.objects.filter(author__in=subscribed_to)
+    context = {
+        'page_obj': paginate(request, posts),
+    }
+    return render(request, 'posts/follow.html', context)
+
+
+@login_required
+def profile_follow(request, username):
+    author = get_object_or_404(User, username=username)
+    if not Follow.objects.filter(user=request.user, author=author).exists():
+        Follow.objects.create(user=request.user, author=author)
+    return redirect('posts:profile', username=username)
+
+
+@login_required
+def profile_unfollow(request, username):
+    author = get_object_or_404(User, username=username)
+    subscription = Follow.objects.filter(user=request.user, author=author)
+    if subscription.exists():
+        subscription.delete()
+    return redirect('posts:profile', username=username)
