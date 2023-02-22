@@ -69,7 +69,7 @@ class Comment(models.Model):
         verbose_name='автор',
         on_delete=models.CASCADE,
     )
-    text = models.TextField('текст')
+    text = models.TextField('текст', help_text='Текст нового комментария')
     created = models.DateTimeField('дата публикации', auto_now_add=True)
 
     class Meta:
