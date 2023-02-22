@@ -2,6 +2,7 @@ import shutil
 import tempfile
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.forms import fields
 from django.test import Client, TestCase, override_settings
@@ -60,6 +61,9 @@ class PostViewTests(TestCase):
         self.authorized_client.force_login(PostViewTests.user)
         self.authorized_client_2 = Client()
         self.authorized_client_2.force_login(PostViewTests.user2)
+
+    def tearDown(self):
+        cache.clear()
 
     def test_pages_use_correct_template(self):
         """View-функции используют соответствующие шаблоны."""
@@ -203,6 +207,20 @@ class PostViewTests(TestCase):
         )
         self.assertEqual(Post.objects.count(), posts_count)
         self.assertTrue(Post.objects.filter(pk=PostViewTests.post.pk).exists())
+
+    def test_index_page_cache(self):
+        """Главная страница корректно кэшируется."""
+        post = Post.objects.create(
+            text='Новый пост',
+            author=PostViewTests.user,
+        )
+        first_response = self.client.get(reverse('posts:index'))
+        post.delete()
+        cached_response = self.client.get(reverse('posts:index'))
+        self.assertEqual(first_response.content, cached_response.content)
+        cache.clear()
+        noncached_response = self.client.get(reverse('posts:index'))
+        self.assertNotEqual(first_response.content, noncached_response.content)
 
 
 class PostsPaginatorTests(TestCase):

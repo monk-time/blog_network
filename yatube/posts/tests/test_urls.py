@@ -1,6 +1,7 @@
 from collections import namedtuple
 from http import HTTPStatus
 
+from django.core.cache import cache
 from django.test import Client, TestCase
 
 from ..models import Group, Post, User
@@ -110,6 +111,9 @@ class PostURLTests(TestCase):
                 code=HTTPStatus.NOT_FOUND,
             ),
         ]
+
+    def tearDown(self):
+        cache.clear()
 
     def test_urls_return_correct_status_code(self):
         """Страницы возвращают корректный HTTP-код."""
