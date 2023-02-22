@@ -107,12 +107,11 @@ class PostURLTests(TestCase):
                 redirect_url=f'/posts/{self.post.pk}/',
             ),
             URLData(
-                url='/unexisting_page/',
+                url='/nonexistent_page/',
                 code=HTTPStatus.NOT_FOUND,
             ),
         ]
 
-    def tearDown(self):
         cache.clear()
 
     def test_urls_return_correct_status_code(self):
@@ -140,6 +139,7 @@ class PostURLTests(TestCase):
             f'/posts/{PostURLTests.post.pk}/': 'posts/post_detail.html',
             f'/posts/{PostURLTests.post.pk}/edit/': 'posts/create_post.html',
             '/create/': 'posts/create_post.html',
+            '/nonexistent_page/': 'core/404.html',
         }
         for url, template in templates_urls.items():
             with self.subTest(url=url):

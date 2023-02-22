@@ -61,8 +61,6 @@ class PostViewTests(TestCase):
         self.authorized_client.force_login(PostViewTests.user)
         self.authorized_client_2 = Client()
         self.authorized_client_2.force_login(PostViewTests.user2)
-
-    def tearDown(self):
         cache.clear()
 
     def test_pages_use_correct_template(self):
