@@ -145,3 +145,10 @@ class PostURLTests(TestCase):
             with self.subTest(url=url):
                 response = self.authorized_client.get(url)
                 self.assertTemplateUsed(response, template)
+
+    def test_403_uses_correct_template(self):
+        """При отправке формы без CSRF-токена ошибка с нужным шаблоном."""
+        client_csrf = Client(enforce_csrf_checks=True)
+        response = client_csrf.post('/create/', data={'text': 'text'})
+        print(response.status_code)
+        self.assertTemplateUsed(response, 'core/403csrf.html')
