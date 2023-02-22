@@ -94,3 +94,14 @@ class PostFormTests(TestCase):
         self.assertEqual(post.text, form_data['text'])
         self.assertEqual(post.group, PostFormTests.group)
         self.assertIsInstance(post.image, ImageFieldFile)
+
+    def test_comment_form_creates_comment(self):
+        self.assertEqual(PostFormTests.post.comments.count(), 0)
+        form_data = {'text': 'Комментарий'}
+        self.authorized_client.post(
+            reverse('posts:add_comment', args=[PostFormTests.post.pk]),
+            data=form_data,
+        )
+        comments = PostFormTests.post.comments.all()
+        self.assertEqual(comments.count(), 1)
+        self.assertEqual(comments[0].text, form_data['text'])

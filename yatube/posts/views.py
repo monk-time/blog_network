@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import PostForm
+from .forms import CommentForm, PostForm
 from .models import Group, Post, User
 from .utils import paginate
 
@@ -35,7 +35,12 @@ def profile(request: HttpRequest, username: str):
 
 def post_detail(request: HttpRequest, post_id: int):
     post = get_object_or_404(Post, pk=post_id)
-    return render(request, 'posts/post_detail.html', {'post': post})
+    context = {
+        'post': post,
+        'comments': post.comments.all(),  # type: ignore
+        'form': CommentForm(),
+    }
+    return render(request, 'posts/post_detail.html', context)
 
 
 @login_required
@@ -85,3 +90,15 @@ def post_delete(request: HttpRequest, post_id: int):
     return redirect(
         'posts:profile', username=request.user.username  # type: ignore
     )
+
+
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    form = CommentForm(request.POST or None)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.author = request.user
+        comment.post = post
+        comment.save()
+    return redirect(post)

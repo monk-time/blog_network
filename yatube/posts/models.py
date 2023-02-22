@@ -54,3 +54,27 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse('posts:post_detail', kwargs={'post_id': self.pk})
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(
+        Post,
+        related_name='comments',
+        verbose_name='пост',
+        on_delete=models.CASCADE,
+    )
+    author = models.ForeignKey(
+        User,
+        related_name='comments',
+        verbose_name='автор',
+        on_delete=models.CASCADE,
+    )
+    text = models.TextField('текст')
+    created = models.DateTimeField('дата публикации', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+
+    def __str__(self):
+        return self.text[:15]

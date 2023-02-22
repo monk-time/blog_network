@@ -8,7 +8,7 @@ from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from ..forms import PostForm
-from ..models import Group, Post, User
+from ..models import Comment, Group, Post, User
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
@@ -43,6 +43,11 @@ class PostViewTests(TestCase):
             author=cls.user,
             group=cls.group,
             image=uploaded,
+        )
+        cls.comment = Comment.objects.create(
+            text='Комментарий',
+            author=cls.user,
+            post=cls.post,
         )
 
     @classmethod
@@ -112,6 +117,9 @@ class PostViewTests(TestCase):
         """Страница поста сформирована с правильным контекстом."""
         response = self.client.get(PostViewTests.post.get_absolute_url())
         self.post_check(response.context['post'])
+        self.assertEqual(
+            response.context['comments'][0], PostViewTests.comment
+        )
 
     def test_post_create_form_has_correct_context(self):
         """Страница создания поста сформирована с правильным контекстом."""

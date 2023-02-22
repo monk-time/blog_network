@@ -93,6 +93,19 @@ class PostURLTests(TestCase):
                 redirect_url=f'/posts/{self.post.pk}/',
             ),
             URLData(
+                url=f'/posts/{self.post.pk}/comment/',
+                code=HTTPStatus.FOUND,
+                redirect_url=(
+                    f'/auth/login/?next=/posts/{self.post.pk}/comment/'
+                ),
+            ),
+            URLData(
+                url=f'/posts/{self.post.pk}/comment/',
+                client=self.authorized_client,
+                code=HTTPStatus.FOUND,
+                redirect_url=f'/posts/{self.post.pk}/',
+            ),
+            URLData(
                 url='/unexisting_page/',
                 code=HTTPStatus.NOT_FOUND,
             ),
