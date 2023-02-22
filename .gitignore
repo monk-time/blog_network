@@ -132,6 +132,7 @@ dmypy.json
 .vscode/
 .idea/
 
-# External resources
+# Static resources
 bootstrap.min.css
 bootstrap.min.js
+media/

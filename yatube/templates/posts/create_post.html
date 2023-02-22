@@ -24,6 +24,10 @@
   {% endif %}
 {% endblock  %}
 
+{% block extra_form_attrs %}
+  enctype="multipart/form-data"
+{% endblock  %}
+
 {% block button_text %}
   {% if is_edit %}
     Сохранить
