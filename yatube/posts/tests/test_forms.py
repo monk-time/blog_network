@@ -30,6 +30,15 @@ class PostFormTests(TestCase):
             author=cls.user,
         )
 
+        cls.small_gif = (
+            b'\x47\x49\x46\x38\x39\x61\x02\x00'
+            b'\x01\x00\x80\x00\x00\x00\x00\x00'
+            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+            b'\x0A\x00\x3B'
+        )
+
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
@@ -39,25 +48,18 @@ class PostFormTests(TestCase):
         self.authorized_client = Client()
         self.authorized_client.force_login(PostFormTests.user)
 
-        small_gif = (
-            b'\x47\x49\x46\x38\x39\x61\x02\x00'
-            b'\x01\x00\x80\x00\x00\x00\x00\x00'
-            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-            b'\x0A\x00\x3B'
-        )
-        self.uploaded_file = SimpleUploadedFile(
-            name='small.gif', content=small_gif, content_type='image/gif'
-        )
-
     def test_post_form_creates_new_post(self):
         """При отправке валидной формы создаётся новый пост."""
         Post.objects.all().delete()
+        uploaded_file = SimpleUploadedFile(
+            name='new_post.gif',
+            content=PostFormTests.small_gif,
+            content_type='image/gif',
+        )
         form_data = {
             'text': 'Созданный через форму пост',
             'group': str(PostFormTests.group.pk),
-            'image': self.uploaded_file,
+            'image': uploaded_file,
         }
         response = self.authorized_client.post(
             reverse('posts:post_create'), data=form_data, follow=True
@@ -73,14 +75,20 @@ class PostFormTests(TestCase):
         self.assertEqual(post.group, PostFormTests.group)
         self.assertEqual(post.author, PostFormTests.user)
         self.assertIsInstance(post.image, ImageFieldFile)
+        self.assertEqual(post.image.name, f'posts/{uploaded_file.name}')
 
     def test_post_form_edits_existing_post(self):
         """При отправке валидной формы редактируется существующий пост."""
         posts_count = Post.objects.count()
+        uploaded_file = SimpleUploadedFile(
+            name='edited_post.gif',
+            content=PostFormTests.small_gif,
+            content_type='image/gif',
+        )
         form_data = {
             'text': 'Отредактированный пост',
             'group': str(PostFormTests.group.pk),
-            'image': self.uploaded_file,
+            'image': uploaded_file,
         }
         response = self.authorized_client.post(
             reverse('posts:post_edit', args=[PostFormTests.post.pk]),
@@ -94,6 +102,7 @@ class PostFormTests(TestCase):
         self.assertEqual(post.text, form_data['text'])
         self.assertEqual(post.group, PostFormTests.group)
         self.assertIsInstance(post.image, ImageFieldFile)
+        self.assertEqual(post.image.name, f'posts/{uploaded_file.name}')
 
     def test_comment_form_creates_comment(self):
         self.assertEqual(PostFormTests.post.comments.count(), 0)
