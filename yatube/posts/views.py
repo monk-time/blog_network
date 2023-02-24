@@ -30,7 +30,7 @@ def profile(request: HttpRequest, username: str):
     posts = author.posts.select_related('group')  # type: ignore
     following = (
         request.user.is_authenticated
-        and Follow.objects.filter(user=request.user, author=author).exists()
+        and author.following.filter(user=request.user).exists()  # type: ignore
     )
     context = {
         'author': author,
@@ -134,6 +134,6 @@ def profile_follow(request, username):
 @login_required
 def profile_unfollow(request, username):
     author = get_object_or_404(User, username=username)
-    subscription = Follow.objects.filter(user=request.user, author=author)
+    subscription = author.following.filter(user=request.user)  # type: ignore
     subscription.delete()
     return redirect('posts:profile', username=username)
