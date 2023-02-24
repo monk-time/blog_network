@@ -113,8 +113,7 @@ def add_comment(request, post_id):
 
 @login_required
 def follow_index(request):
-    subscribed_to = [follow.author for follow in request.user.follower.all()]
-    posts = Post.objects.filter(author__in=subscribed_to)
+    posts = Post.objects.filter(author__following__user=request.user)
     context = {
         'page_obj': paginate(request, posts),
     }
@@ -124,11 +123,8 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     author = get_object_or_404(User, username=username)
-    not_already_subscribed = not Follow.objects.filter(
-        user=request.user, author=author
-    ).exists()
-    if not_already_subscribed and request.user.username != username:
-        Follow.objects.create(user=request.user, author=author)
+    if request.user.username != username:
+        Follow.objects.get_or_create(user=request.user, author=author)
     return redirect('posts:profile', username=username)
 
 
@@ -136,6 +132,5 @@ def profile_follow(request, username):
 def profile_unfollow(request, username):
     author = get_object_or_404(User, username=username)
     subscription = Follow.objects.filter(user=request.user, author=author)
-    if subscription.exists():
-        subscription.delete()
+    subscription.delete()
     return redirect('posts:profile', username=username)
