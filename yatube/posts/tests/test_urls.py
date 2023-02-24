@@ -112,7 +112,28 @@ class PostURLTests(TestCase):
                 url=f'/profile/{self.user.username}/follow/',
                 client=self.authorized_client,
                 code=HTTPStatus.FOUND,
-                redirect_url=f'/profile/{self.user.username}/'
+                redirect_url=f'/profile/{self.user.username}/',
+            ),
+            URLData(
+                url=f'/profile/{self.user.username}/follow/',
+                code=HTTPStatus.FOUND,
+                redirect_url=(
+                    f'/auth/login/?next=/profile/{self.user.username}/follow/'
+                ),
+            ),
+            URLData(
+                url=f'/profile/{self.user.username}/unfollow/',
+                client=self.authorized_client,
+                code=HTTPStatus.FOUND,
+                redirect_url=f'/profile/{self.user.username}/',
+            ),
+            URLData(
+                url=f'/profile/{self.user.username}/unfollow/',
+                code=HTTPStatus.FOUND,
+                redirect_url=(
+                    '/auth/login/?next='
+                    f'/profile/{self.user.username}/unfollow/'
+                ),
             ),
         ]
 
