@@ -92,11 +92,12 @@ def post_delete(request: HttpRequest, post_id: int):
     post = get_object_or_404(Post, pk=post_id)
     if request.user != post.author:
         return redirect(post)
-
-    post.delete()
-    return redirect(
-        'posts:profile', username=request.user.username  # type: ignore
-    )
+    if request.method == 'POST':
+        post.delete()
+        return redirect(
+            'posts:profile', username=request.user.username  # type: ignore
+        )
+    return render(request, 'posts/post_delete_confirm.html')
 
 
 @login_required

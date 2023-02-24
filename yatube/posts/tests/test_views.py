@@ -191,7 +191,7 @@ class PostViewTests(TestCase):
             author=PostViewTests.user,
         )
         posts_count = Post.objects.count()
-        self.authorized_client.get(
+        self.authorized_client.post(
             reverse('posts:post_delete', args=[post_to_delete.pk])
         )
         self.assertEqual(Post.objects.count(), posts_count - 1)
@@ -200,7 +200,7 @@ class PostViewTests(TestCase):
     def test_post_cant_be_deleted_by_wrong_user(self):
         """При попытке удаления неавтором пост остаётся в базе данных."""
         posts_count = Post.objects.count()
-        self.authorized_client_2.get(
+        self.authorized_client_2.post(
             reverse('posts:post_delete', args=[PostViewTests.post.pk])
         )
         self.assertEqual(Post.objects.count(), posts_count)
