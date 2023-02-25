@@ -5,7 +5,7 @@
       <li>
         Автор:
         <a href="{% url 'posts:profile' post.author.username %}">
-          {{ post.author.get_full_name }}
+          {% firstof post.author.get_full_name post.author.username %}
         </a>
       </li>
       <li>
