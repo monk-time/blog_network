@@ -10,6 +10,9 @@ class CreationForm(UserCreationForm):
         fields = ('first_name', 'last_name', 'username', 'email')
 
     def clean_email(self):
-        if User.objects.filter(email=self.cleaned_data['email']).exists():
+        if (
+            self.cleaned_data['email']
+            and User.objects.filter(email=self.cleaned_data['email']).exists()
+        ):
             raise ValidationError('Этот адрес уже зарегистрирован')
         return self.cleaned_data['email']
