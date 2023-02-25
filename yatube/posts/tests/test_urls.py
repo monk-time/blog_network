@@ -37,7 +37,7 @@ class PostURLTests(TestCase):
         )
 
         URLData = namedtuple(
-            'URL',
+            'URLData',
             ('url', 'client', 'code', 'redirect_url'),
             defaults=(self.client, HTTPStatus.OK, None),
         )
