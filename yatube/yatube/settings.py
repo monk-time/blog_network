@@ -1,5 +1,7 @@
 import os
 
+from core.markdown.utils import set_title
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -44,6 +46,7 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'about.apps.AboutConfig',
     'sorl.thumbnail',
+    'markdownify.apps.MarkdownifyConfig',
     'debug_toolbar',
 ]
 
@@ -158,3 +161,34 @@ POSTS_PER_PAGE = 10
 LOGIN_URL = 'users:login'
 LOGIN_REDIRECT_URL = 'posts:index'
 # LOGOUT_REDIRECT_URL = 'posts:index'
+
+
+MARKDOWNIFY = {
+    "default": {
+        "LINKIFY_TEXT": {
+            "PARSE_URLS": True,
+            "CALLBACKS": [set_title],
+        },
+        "MARKDOWN_EXTENSIONS": [
+            'markdown.extensions.fenced_code',
+        ],
+        "WHITELIST_TAGS": [
+            'a',
+            'abbr',
+            'acronym',
+            'b',
+            'blockquote',
+            'em',
+            'i',
+            'li',
+            'ol',
+            'p',
+            'strong',
+            'ul',
+            'h1',
+            'h2',
+            'h3',
+            'pre',
+        ],
+    },
+}

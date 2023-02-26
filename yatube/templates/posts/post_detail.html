@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load thumbnail %}
+{% load markdownify %}
 
 {% block title %}
   Пост {{ post.text|truncatechars:30 }}
@@ -37,7 +38,7 @@
           <img class="card-img my-2" src="{{ im.url }}">
         </a>
       {% endthumbnail %}
-      <p>{{ post.text|linebreaksbr }}</p>
+      <p>{{ post.text|markdownify|linebreaksbr }}</p>
       {% if user == post.author %}
         <a class="btn btn-primary" href="{% url 'posts:post_edit' post.id %}">
           редактировать запись

@@ -1,5 +1,6 @@
 {% load user_filters %}
 {% load humanize %}
+{% load markdownify %}
 
 {% if user.is_authenticated %}
   <div class="card my-4">
@@ -28,7 +29,7 @@
         <small class="text-muted ms-1">{{ comment.created|naturaltime }}</small>
       </div>
       <p>
-        {{ comment.text }}
+        {{ comment.text|markdownify }}
       </p>
     </div>
   </div>
