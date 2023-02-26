@@ -5,3 +5,4 @@ django-debug-toolbar==4.3.0
 pytest==8.1.1
 pytest-django==4.8.0
 mixer==7.2.2
+django-markdownify==0.9.3
