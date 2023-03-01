@@ -10,7 +10,7 @@
   {% load cache %}
   {% cache 20 index page_obj.number %}
     {% for post in page_obj %}
-      {% include 'posts/includes/post.html' with show_group=True %}
+      {% include 'posts/includes/post.html' with show_group=True show_author=True %}
       {% if not forloop.last %}<hr>{% endif %}
     {% endfor %}
   {% endcache %}

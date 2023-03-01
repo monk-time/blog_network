@@ -8,7 +8,7 @@
   <h1>Ваши подписки</h1>
   {% include 'posts/includes/switcher.html' with follow=True %}
   {% for post in page_obj %}
-    {% include 'posts/includes/post.html' with show_group=True %}
+    {% include 'posts/includes/post.html' with show_group=True show_author=True %}
     {% if not forloop.last %}<hr>{% endif %}
   {% endfor %}
   {% include 'posts/includes/paginator.html' %}
