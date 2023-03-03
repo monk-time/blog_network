@@ -24,7 +24,10 @@
           {% include 'includes/nav_link.html' with path='users:password_change' text='Изменить пароль' light=True %}
           {% include 'includes/nav_link.html' with path='users:logout' text='Выйти' light=True %}
           <li class="navbar-text">
-            Пользователь: {{ user.username }}
+            Пользователь:
+            <a href="{% url 'posts:profile' user.username %}">
+              {{ user.username }}
+            </a>
           </li>
           {% else %}
           {% include 'includes/nav_link.html' with path='users:login' text='Войти' light=True %}
