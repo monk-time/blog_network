@@ -222,13 +222,11 @@ class PostViewTests(TestCase):
 
     def test_user_can_subscribe_and_unsubscribe(self):
         """Юзер может подписаться на других юзеров и удалять их из подписок."""
-        follow_count = Follow.objects.filter(user=PostViewTests.user).count()
-        self.assertEqual(follow_count, 0)
+        initial_follow_count = Follow.objects.count()
         self.authorized_client.get(
             reverse('posts:profile_follow', args=[PostViewTests.user2])
         )
-        follow_count = Follow.objects.filter(user=PostViewTests.user).count()
-        self.assertEqual(follow_count, 1)
+        self.assertEqual(Follow.objects.count(), initial_follow_count + 1)
         self.assertTrue(
             Follow.objects.filter(
                 user=PostViewTests.user, author=PostViewTests.user2
@@ -237,8 +235,7 @@ class PostViewTests(TestCase):
         self.authorized_client.get(
             reverse('posts:profile_unfollow', args=[PostViewTests.user2])
         )
-        follow_count = Follow.objects.filter(user=PostViewTests.user).count()
-        self.assertEqual(follow_count, 0)
+        self.assertEqual(Follow.objects.count(), initial_follow_count)
 
     def test_new_posts_appear_on_subscription_page(self):
         """Новая запись появляется в ленте только тех, кто на него подписан."""
