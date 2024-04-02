@@ -16,7 +16,7 @@ class PostAdmin(admin.ModelAdmin):
     list_filter = ('pub_date', 'group')
     search_fields = ('text',)
     empty_value_display = '-пусто-'
-    inlines = [CommentInline]
+    inlines = (CommentInline,)
 
 
 @admin.register(Group)
@@ -24,7 +24,7 @@ class GroupAdmin(admin.ModelAdmin):
     list_display = ('title', 'slug', 'description')
     list_editable = ('slug',)
     empty_value_display = '-пусто-'
-    prepopulated_fields = {'slug': ('title',)}
+    prepopulated_fields = {'slug': ('title',)}  # noqa: RUF012
 
 
 @admin.register(Comment)

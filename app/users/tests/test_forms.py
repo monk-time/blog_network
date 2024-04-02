@@ -34,8 +34,7 @@ class UserFormTests(TestCase):
         )
         self.assertEqual(User.objects.count(), users_count)
         self.assertFormError(
-            response,
-            form='form',
+            form=response.context['form'],
             field='email',
             errors='Этот адрес уже зарегистрирован',
-        )
+        )  # type: ignore

@@ -132,7 +132,11 @@ dmypy.json
 .vscode/
 .idea/
 
+# Ruff
+.ruff_cache
+
 # Static resources
 bootstrap.min.css
 bootstrap.min.js
 media/
+sent_emails

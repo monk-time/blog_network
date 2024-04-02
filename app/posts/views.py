@@ -61,7 +61,8 @@ def post_create(request: HttpRequest):
 
     form.save()
     return redirect(
-        'posts:profile', username=request.user.username  # type: ignore
+        'posts:profile',
+        username=request.user.username,  # type: ignore
     )
 
 
@@ -93,7 +94,8 @@ def post_delete(request: HttpRequest, post_id: int):
     if request.method == 'POST':
         post.delete()
         return redirect(
-            'posts:profile', username=request.user.username  # type: ignore
+            'posts:profile',
+            username=request.user.username,  # type: ignore
         )
     return render(request, 'posts/post_delete_confirm.html')
 

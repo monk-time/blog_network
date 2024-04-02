@@ -1,3 +1,5 @@
+# ruff: noqa: ARG001
+
 from django.shortcuts import render
 
 

@@ -5,8 +5,8 @@
 Также см. два варианта REST API для этого проекта: [на DRF](https://github.com/monk-time/blog_network_api) и [на FastAPI](https://github.com/monk-time/blog_network_fastapi).
 
 ### Технологии
-- Python 3.7
-- Django 2.2.19
+- Python 3.12
+- Django 5.0.3
 - SQLite 3
 ### Запуск проекта в dev-режиме
 1. Cоздайте и активируйте виртуальное окружение:

@@ -1,6 +1,6 @@
 import datetime
 
 
-def year(request):
+def year(request):  # noqa: ARG001
     """Добавляет переменную с текущим годом."""
-    return {'year': datetime.datetime.now().year}
+    return {'year': datetime.datetime.now(datetime.UTC).year}

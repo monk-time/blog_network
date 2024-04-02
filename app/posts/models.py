@@ -49,7 +49,7 @@ class Post(models.Model):
     )
 
     class Meta:
-        ordering = ['-pub_date']
+        ordering = ('-pub_date',)
         verbose_name = 'Пост'
         verbose_name_plural = 'Посты'
 
@@ -99,7 +99,7 @@ class Follow(models.Model):
     )
 
     class Meta:
-        constraints = [
+        constraints = (
             models.UniqueConstraint(
                 name='unique_follow',
                 fields=['user', 'author'],
@@ -108,7 +108,7 @@ class Follow(models.Model):
                 name='cant_subscribe_to_self',
                 check=~models.Q(user=models.F('author')),
             ),
-        ]
+        )
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
 
