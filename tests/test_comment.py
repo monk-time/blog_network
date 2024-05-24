@@ -24,10 +24,9 @@ def search_field(fields, attname):
 
 def search_refind(execution, user_code):
     """Поиск запуска."""
-    for temp_line in user_code.split('\n'):
-        if re.search(execution, temp_line):
-            return True
-    return False
+    return any(
+        re.search(execution, temp_line) for temp_line in user_code.split('\n')
+    )
 
 
 class TestComment:
@@ -50,35 +49,45 @@ class TestComment:
             if pub_date_field is not None:
                 pub_date_field_name = 'created'
 
-        assert (
-            pub_date_field is not None
-        ), f'Добавьте дату и время проведения события `{pub_date_field_name}` модели `Comment`'
-        assert (
-            type(pub_date_field) == fields.DateTimeField
-        ), f'Свойство `{pub_date_field_name}` модели `Comment` должно быть датой и время `DateTimeField`'
-        assert pub_date_field.auto_now_add, f'Свойство `{pub_date_field_name}` модели `Comment` должно быть `auto_now_add`'
+        assert pub_date_field is not None, (
+            'Добавьте дату и время проведения события '
+            f'`{pub_date_field_name}` модели `Comment`'
+        )
+        assert type(pub_date_field) == fields.DateTimeField, (
+            f'Свойство `{pub_date_field_name}` модели `Comment` '
+            'должно быть датой и время `DateTimeField`'
+        )
+        assert pub_date_field.auto_now_add, (
+            f'Свойство `{pub_date_field_name}` модели `Comment` '
+            'должно быть `auto_now_add`'
+        )
 
         author_field = search_field(model_fields, 'author_id')
-        assert (
-            author_field is not None
-        ), 'Добавьте пользователя, автор который создал событие `author` модели `Comment`'
-        assert (
-            type(author_field) == fields.related.ForeignKey
-        ), 'Свойство `author` модели `Comment` должно быть ссылкой на другую модель `ForeignKey`'
-        assert (
-            author_field.related_model == get_user_model()
-        ), 'Свойство `author` модели `Comment` должно быть ссылкой на модель пользователя `User`'
+        assert author_field is not None, (
+            'Добавьте пользователя, автор который создал '
+            'событие `author` модели `Comment`'
+        )
+        assert type(author_field) == fields.related.ForeignKey, (
+            'Свойство `author` модели `Comment` '
+            'должно быть ссылкой на другую модель `ForeignKey`'
+        )
+        assert author_field.related_model == get_user_model(), (
+            'Свойство `author` модели `Comment` '
+            'должно быть ссылкой на модель пользователя `User`'
+        )
 
         post_field = search_field(model_fields, 'post_id')
         assert (
             post_field is not None
         ), 'Добавьте свойство `group` в модель `Comment`'
-        assert (
-            type(post_field) == fields.related.ForeignKey
-        ), 'Свойство `group` модели `Comment` должно быть ссылкой на другую модель `ForeignKey`'
-        assert (
-            post_field.related_model == Post
-        ), 'Свойство `group` модели `Comment` должно быть ссылкой на модель `Post`'
+        assert type(post_field) == fields.related.ForeignKey, (
+            'Свойство `group` модели `Comment` '
+            'должно быть ссылкой на другую модель `ForeignKey`'
+        )
+        assert post_field.related_model == Post, (
+            'Свойство `group` модели `Comment` '
+            'должно быть ссылкой на модель `Post`'
+        )
 
     @pytest.mark.django_db(transaction=True)
     def test_comment_add_view(self, client, post):

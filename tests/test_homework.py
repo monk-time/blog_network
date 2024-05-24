@@ -30,10 +30,9 @@ def search_field(fields, attname):
 
 def search_refind(execution, user_code):
     """Поиск запуска."""
-    for temp_line in user_code.split('\n'):
-        if re.search(execution, temp_line):
-            return True
-    return False
+    return any(
+        re.search(execution, temp_line) for temp_line in user_code.split('\n')
+    )
 
 
 class TestPost:
@@ -59,10 +58,14 @@ class TestPost:
         assert (
             pub_date_field is not None
         ), f'Добавьте дату и время проведения события в `{pub_date_field_name}` модели `Post`'
-        assert (
-            type(pub_date_field) == fields.DateTimeField
-        ), f'Свойство `{pub_date_field_name}` модели `Post` должно быть датой и временем `DateTimeField`'
-        assert pub_date_field.auto_now_add, 'Свойство `pub_date` или `created` модели `Post` должно быть `auto_now_add`'
+        assert type(pub_date_field) == fields.DateTimeField, (
+            f'Свойство `{pub_date_field_name}` модели `Post` '
+            'должно быть датой и временем `DateTimeField`'
+        )
+        assert pub_date_field.auto_now_add, (
+            'Свойство `pub_date` или `created` модели `Post` '
+            'должно быть `auto_now_add`'
+        )
 
         author_field = search_field(model_fields, 'author_id')
         assert (
@@ -85,7 +88,10 @@ class TestPost:
         assert (
             group_field.related_model == Group
         ), 'Свойство `group` модели `Post` должно быть ссылкой на модель `Group`'
-        assert group_field.blank, 'Свойство `group` модели `Post` должно быть с атрибутом `blank=True`'
+        assert group_field.blank, (
+            'Свойство `group` модели `Post` '
+            'должно быть с атрибутом `blank=True`'
+        )
         assert (
             group_field.null
         ), 'Свойство `group` модели `Post` должно быть с атрибутом `null=True`'
@@ -129,7 +135,10 @@ class TestPost:
         assert (
             'pub_date' in admin_model.list_display
             or 'created' in admin_model.list_display
-        ), 'Добавьте `pub_date` или `created` для отображения в списке модели административного сайта'
+        ), (
+            'Добавьте `pub_date` или `created` для отображения '
+            'в списке модели административного сайта'
+        )
         assert (
             'author' in admin_model.list_display
         ), 'Добавьте `author` для отображения в списке модели административного сайта'
@@ -241,11 +250,13 @@ class TestGroupView:
         ), f'Проверьте, что в контекст страницы переданы правильные статьи автора `{url_templ}`'
         posts_list = page_context.object_list
         for post in posts_list:
-            assert hasattr(
-                post, 'image'
-            ), f'Убедитесь, что статья, передаваемая в контекст страницы `{url_templ}`, имеет поле `image`'
+            assert hasattr(post, 'image'), (
+                'Убедитесь, что статья, передаваемая в контекст '
+                f'страницы `{url_templ}`, имеет поле `image`'
+            )
             assert post.image is not None, (
-                f'Убедитесь, что статья, передаваемая в контекст страницы `{url_templ}`, имеет поле `image`, '
+                'Убедитесь, что статья, передаваемая в контекст '
+                f'страницы `{url_templ}`, имеет поле `image`, '
                 'и туда передается изображение'
             )
 

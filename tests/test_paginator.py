@@ -40,9 +40,10 @@ class TestGroupPaginatorView:
         self, client, few_posts_with_group
     ):
         response = client.get('/')
-        assert isinstance(
-            response.context['page_obj'].paginator, Paginator
-        ), 'Проверьте, что переменная `paginator` объекта `page_obj` на странице `/` типа `Paginator`'
+        assert isinstance(response.context['page_obj'].paginator, Paginator), (
+            'Проверьте, что переменная `paginator` объекта `page_obj` '
+            'на странице `/` типа `Paginator`'
+        )
 
     def test_index_paginator_view(self, client, post_with_group):
         cache.clear()

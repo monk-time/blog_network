@@ -35,7 +35,10 @@ class TestCreateView:
         assert (
             type(response.context['form'].fields['group'])
             is forms.models.ModelChoiceField
-        ), 'Проверьте, что в форме `form` на странице `/create/` поле `group` типа `ModelChoiceField`'
+        ), (
+            'Проверьте, что в форме `form` на странице `/create/` '
+            'поле `group` типа `ModelChoiceField`'
+        )
         assert (
             not response.context['form'].fields['group'].required
         ), 'Проверьте, что в форме `form` на странице `/create/` поле `group` не обязательно'
@@ -113,6 +116,7 @@ class TestCreateView:
         ), f'Проверьте, что перенаправляете на страницу профиля автора `/profile/{user.username}`'
 
         response = user_client.post(url)
-        assert (
-            response.status_code == 200
-        ), 'Проверьте, что на странице `/create/` выводите ошибки при неправильной заполненной формы `form`'
+        assert response.status_code == 200, (
+            'Проверьте, что на странице `/create/` выводите ошибки '
+            'при неправильной заполненной формы `form`'
+        )

@@ -1,5 +1,5 @@
-from collections import namedtuple
 from http import HTTPStatus
+from typing import NamedTuple
 
 from django.core.cache import cache
 from django.test import Client, TestCase
@@ -36,11 +36,12 @@ class PostURLTests(TestCase):
             PostURLTests.user_nonauthor
         )
 
-        URLData = namedtuple(
-            'URLData',
-            ('url', 'client', 'code', 'redirect_url'),
-            defaults=(self.client, HTTPStatus.OK, None),
-        )
+        class URLData(NamedTuple):
+            url: str
+            client: Client = self.client
+            code: HTTPStatus = HTTPStatus.OK
+            redirect_url: str | None = None
+
         self.urls = [
             URLData(url=''),
             URLData(url=f'/group/{self.group.slug}/'),

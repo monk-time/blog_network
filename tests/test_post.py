@@ -28,12 +28,13 @@ class TestPostView:
         ), 'Проверьте, что в контекст главной страницы переданы правильные статьи автора'
         posts_list = page_context.object_list
         for loaded_post in posts_list:
-            assert hasattr(
-                loaded_post, 'image'
-            ), 'Убедитесь, что статья, передаваемая в контекст главной страницы `/`, имеет поле `image`'
+            assert hasattr(loaded_post, 'image'), (
+                'Убедитесь, что статья, передаваемая в контекст '
+                'главной страницы `/`, имеет поле `image`'
+            )
             assert loaded_post.image is not None, (
-                'Убедитесь, что статья, передаваемая в контекст главной страницы `/`, имеет поле `image`, '
-                'и туда передается изображение'
+                'Убедитесь, что статья, передаваемая в контекст '
+                'главной страницы `/`, имеет поле `image`, и туда передается изображение'
             )
 
     @pytest.mark.django_db(transaction=True)
@@ -89,27 +90,31 @@ class TestPostView:
         comment_form_context = get_field_from_context(
             response.context, CommentForm
         )
-        assert (
-            comment_form_context is not None
-        ), 'Проверьте, что передали форму комментария в контекст страницы `/posts/<post_id>/` типа `CommentForm`'
-        assert (
-            len(comment_form_context.fields) == 1
-        ), 'Проверьте, что форма комментария в контексте страницы `/posts/<post_id>/` состоит из одного поля'
-        assert (
-            'text' in comment_form_context.fields
-        ), 'Проверьте, что форма комментария в контексте страницы `/posts/<post_id>/` содержится поле `text`'
+        assert comment_form_context is not None, (
+            'Проверьте, что передали форму комментария в контекст страницы '
+            '`/posts/<post_id>/` типа `CommentForm`'
+        )
+        assert len(comment_form_context.fields) == 1, (
+            'Проверьте, что форма комментария в контексте страницы '
+            '`/posts/<post_id>/` состоит из одного поля'
+        )
+        assert 'text' in comment_form_context.fields, (
+            'Проверьте, что форма комментария в контексте страницы '
+            '`/posts/<post_id>/` содержится поле `text`'
+        )
         assert (
             type(comment_form_context.fields['text']) is forms.fields.CharField
         ), (
             'Проверьте, что форма комментария в контексте страницы `/posts/<post_id>/` '
             'содержится поле `text` типа `CharField`'
         )
-        assert hasattr(
-            post_context, 'image'
-        ), 'Убедитесь, что статья, передаваемая в контекст страницы `/posts/<post_id>/`, имеет поле `image`'
+        assert hasattr(post_context, 'image'), (
+            'Убедитесь, что статья, передаваемая в контекст страницы '
+            '`/posts/<post_id>/`, имеет поле `image`'
+        )
         assert post_context.image is not None, (
-            'Убедитесь, что статья, передаваемая в контекст страницы `/posts/<post_id>/`, имеет поле `image`, '
-            'и туда передается изображение'
+            'Убедитесь, что статья, передаваемая в контекст страницы '
+            '`/posts/<post_id>/`, имеет поле `image`, и туда передается изображение'
         )
 
 
@@ -151,9 +156,10 @@ class TestPostEditView:
 
         post_context = get_field_from_context(response.context, Post)
         postform_context = get_field_from_context(response.context, PostForm)
-        assert (
-            any([post_context, postform_context]) is not None
-        ), 'Проверьте, что передали статью в контекст страницы `/posts/<post_id>/edit/` типа `Post` или `PostForm`'
+        assert any([post_context, postform_context]) is not None, (
+            'Проверьте, что передали статью в контекст страницы '
+            '`/posts/<post_id>/edit/` типа `Post` или `PostForm`'
+        )
 
         assert (
             'form' in response.context
@@ -168,10 +174,14 @@ class TestPostEditView:
         assert (
             type(response.context['form'].fields['group'])
             is forms.models.ModelChoiceField
-        ), 'Проверьте, что в форме `form` на странице `/posts/<post_id>/edit/` поле `group` типа `ModelChoiceField`'
-        assert (
-            not response.context['form'].fields['group'].required
-        ), 'Проверьте, что в форме `form` на странице `/posts/<post_id>/edit/` поле `group` не обязательно'
+        ), (
+            'Проверьте, что в форме `form` на странице `/posts/<post_id>/edit/` '
+            'поле `group` типа `ModelChoiceField`'
+        )
+        assert not response.context['form'].fields['group'].required, (
+            'Проверьте, что в форме `form` на странице `/posts/<post_id>/edit/` '
+            'поле `group` не обязательно'
+        )
 
         assert (
             'text' in response.context['form'].fields
@@ -179,10 +189,14 @@ class TestPostEditView:
         assert (
             type(response.context['form'].fields['text'])
             is forms.fields.CharField
-        ), 'Проверьте, что в форме `form` на странице `/posts/<post_id>/edit/` поле `text` типа `CharField`'
-        assert (
-            response.context['form'].fields['text'].required
-        ), 'Проверьте, что в форме `form` на странице `/posts/<post_id>/edit/` поле `group` обязательно'
+        ), (
+            'Проверьте, что в форме `form` на странице `/posts/<post_id>/edit/` '
+            'поле `text` типа `CharField`'
+        )
+        assert response.context['form'].fields['text'].required, (
+            'Проверьте, что в форме `form` на странице `/posts/<post_id>/edit/` '
+            'поле `group` обязательно'
+        )
 
         assert (
             'image' in response.context['form'].fields
@@ -190,7 +204,10 @@ class TestPostEditView:
         assert (
             type(response.context['form'].fields['image'])
             is forms.fields.ImageField
-        ), 'Проверьте, что в форме `form` на странице `/posts/<post_id>/edit/` поле `image` типа `ImageField`'
+        ), (
+            'Проверьте, что в форме `form` на странице `/posts/<post_id>/edit/` '
+            'поле `image` типа `ImageField`'
+        )
 
     @staticmethod
     def get_image_file(name, ext='png', size=(50, 50), color=(256, 0, 0)):

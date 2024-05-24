@@ -26,10 +26,9 @@ def search_field(model_fields, searching_field_name):
 
 def search_refind(execution, user_code):
     """Поиск запуска."""
-    for temp_line in user_code.split('\n'):
-        if re.search(execution, temp_line):
-            return True
-    return False
+    return any(
+        re.search(execution, temp_line) for temp_line in user_code.split('\n')
+    )
 
 
 class TestFollow:
@@ -89,7 +88,8 @@ class TestFollow:
             and response.url.startswith('/auth/login')
         ):
             pytest.fail(
-                'Проверьте, что не авторизованного пользователя `/follow/` отправляет на страницу авторизации'
+                'Проверьте, что не авторизованного пользователя '
+                '`/follow/` отправляет на страницу авторизации'
             )
 
         response = self.check_url(
@@ -102,8 +102,8 @@ class TestFollow:
             and response.url.startswith('/auth/login')
         ):
             pytest.fail(
-                'Проверьте, что не авторизованного пользователя `profile/<username>/follow/` '
-                'отправляете на страницу авторизации'
+                'Проверьте, что неавторизованного пользователя '
+                '`profile/<username>/follow/` отправляете на страницу авторизации'
             )
 
         response = self.check_url(
@@ -116,8 +116,8 @@ class TestFollow:
             and response.url.startswith('/auth/login')
         ):
             pytest.fail(
-                'Проверьте, что не авторизованного пользователя `profile/<username>/unfollow/` '
-                'отправляете на страницу авторизации'
+                'Проверьте, что неавторизованного пользователя '
+                '`profile/<username>/unfollow/` отправляете на страницу авторизации'
             )
 
     @pytest.mark.django_db(transaction=True)

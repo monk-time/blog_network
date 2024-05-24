@@ -1,13 +1,14 @@
 import os
+from pathlib import Path
 
 import pytest
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
 root_dir_content = os.listdir(BASE_DIR)
 PROJECT_DIR_NAME = 'app'
-MANAGE_PATH = os.path.join(BASE_DIR, PROJECT_DIR_NAME)
+MANAGE_PATH = BASE_DIR / PROJECT_DIR_NAME
 # проверяем, что в корне репозитория лежит папка с проектом
-if PROJECT_DIR_NAME not in root_dir_content or not os.path.isdir(MANAGE_PATH):
+if PROJECT_DIR_NAME not in root_dir_content or not MANAGE_PATH.is_dir():
     pytest.fail(
         f'В директории `{BASE_DIR}` не найдена папка c проектом `{PROJECT_DIR_NAME}`. '
         f'Убедитесь, что у вас верная структура проекта.'

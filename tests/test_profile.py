@@ -38,12 +38,13 @@ class TestProfileView:
         ), f'Проверьте, что в контекст страницы переданы правильные статьи автора `{url_templ}`'
         posts_list = page_context.object_list
         for post in posts_list:
-            assert hasattr(
-                post, 'image'
-            ), f'Убедитесь, что статья, передаваемая в контекст страницы `{url_templ}`, имеет поле `image`'
+            assert hasattr(post, 'image'), (
+                'Убедитесь, что статья, передаваемая в контекст страницы '
+                f'`{url_templ}`, имеет поле `image`'
+            )
             assert post.image is not None, (
-                f'Убедитесь, что статья, передаваемая в контекст страницы `{url_templ}`, имеет поле `image`, '
-                'и туда передается изображение'
+                'Убедитесь, что статья, передаваемая в контекст страницы '
+                f'`{url_templ}`, имеет поле `image`, и туда передается изображение'
             )
 
         new_user = get_user_model()(username='new_user_87123478')
