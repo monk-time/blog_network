@@ -18,24 +18,24 @@ class TestProfileView:
             )
         if response.status_code in {301, 302}:
             response = client.get(f'{url}/')
-        assert (
-            response.status_code != 404
-        ), f'Страница `{url_templ}` не найдена, проверьте этот адрес в *urls.py*'
+        assert response.status_code != 404, (
+            f'Страница `{url_templ}` не найдена, проверьте этот адрес в *urls.py*'
+        )
 
         profile_context = get_field_from_context(
             response.context, get_user_model()
         )
-        assert (
-            profile_context is not None
-        ), f'Проверьте, что передали автора в контекст страницы `{url_templ}`'
+        assert profile_context is not None, (
+            f'Проверьте, что передали автора в контекст страницы `{url_templ}`'
+        )
 
         page_context = get_field_from_context(response.context, Page)
-        assert (
-            page_context is not None
-        ), f'Проверьте, что передали статьи автора в контекст страницы `{url_templ}` типа `Page`'
-        assert (
-            len(page_context.object_list) == 1
-        ), f'Проверьте, что в контекст страницы переданы правильные статьи автора `{url_templ}`'
+        assert page_context is not None, (
+            f'Проверьте, что передали статьи автора в контекст страницы `{url_templ}` типа `Page`'
+        )
+        assert len(page_context.object_list) == 1, (
+            f'Проверьте, что в контекст страницы переданы правильные статьи автора `{url_templ}`'
+        )
         posts_list = page_context.object_list
         for post in posts_list:
             assert hasattr(post, 'image'), (
@@ -60,9 +60,9 @@ class TestProfileView:
             new_response = client.get(f'{url}/')
 
         page_context = get_field_from_context(new_response.context, Page)
-        assert (
-            page_context is not None
-        ), f'Проверьте, что передали статьи автора в контекст страницы `{url_templ}` типа `Page`'
-        assert (
-            len(page_context.object_list) == 0
-        ), f'Проверьте, что правильные статьи автора в контекст страницы `{url_templ}`'
+        assert page_context is not None, (
+            f'Проверьте, что передали статьи автора в контекст страницы `{url_templ}` типа `Page`'
+        )
+        assert len(page_context.object_list) == 0, (
+            f'Проверьте, что правильные статьи автора в контекст страницы `{url_templ}`'
+        )

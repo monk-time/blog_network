@@ -33,12 +33,12 @@ class TestComment:
     def test_comment_model(self):
         model_fields = Comment._meta.fields
         text_field = search_field(model_fields, 'text')
-        assert (
-            text_field is not None
-        ), 'Добавьте название события `text` модели `Comment`'
-        assert (
-            type(text_field) == fields.TextField
-        ), 'Свойство `text` модели `Comment` должно быть текстовым `TextField`'
+        assert text_field is not None, (
+            'Добавьте название события `text` модели `Comment`'
+        )
+        assert isinstance(text_field, fields.TextField), (
+            'Свойство `text` модели `Comment` должно быть текстовым `TextField`'
+        )
 
         pub_date_field_name = 'created'
         pub_date_field = search_field(model_fields, 'pub_date')
@@ -53,7 +53,7 @@ class TestComment:
             'Добавьте дату и время проведения события '
             f'`{pub_date_field_name}` модели `Comment`'
         )
-        assert type(pub_date_field) == fields.DateTimeField, (
+        assert isinstance(pub_date_field, fields.DateTimeField), (
             f'Свойство `{pub_date_field_name}` модели `Comment` '
             'должно быть датой и время `DateTimeField`'
         )
@@ -67,7 +67,7 @@ class TestComment:
             'Добавьте пользователя, автор который создал '
             'событие `author` модели `Comment`'
         )
-        assert type(author_field) == fields.related.ForeignKey, (
+        assert isinstance(author_field, fields.related.ForeignKey), (
             'Свойство `author` модели `Comment` '
             'должно быть ссылкой на другую модель `ForeignKey`'
         )
@@ -77,10 +77,10 @@ class TestComment:
         )
 
         post_field = search_field(model_fields, 'post_id')
-        assert (
-            post_field is not None
-        ), 'Добавьте свойство `group` в модель `Comment`'
-        assert type(post_field) == fields.related.ForeignKey, (
+        assert post_field is not None, (
+            'Добавьте свойство `group` в модель `Comment`'
+        )
+        assert isinstance(post_field, fields.related.ForeignKey), (
             'Свойство `group` модели `Comment` '
             'должно быть ссылкой на другую модель `ForeignKey`'
         )
@@ -104,9 +104,9 @@ class TestComment:
             url = f'/posts/{post.id}/comment/'
         else:
             url = f'/posts/{post.id}/comment'
-        assert (
-            response.status_code != 404
-        ), 'Страница `/posts/<post_id>/comment/` не найдена, проверьте этот адрес в *urls.py*'
+        assert response.status_code != 404, (
+            'Страница `/posts/<post_id>/comment/` не найдена, проверьте этот адрес в *urls.py*'
+        )
 
         response = client.post(url, data={'text': 'Новый коммент!'})
         if not (
@@ -133,9 +133,9 @@ class TestComment:
             url = f'/posts/{post.id}/comment/'
         else:
             url = f'/posts/{post.id}/comment'
-        assert (
-            response.status_code != 404
-        ), 'Страница `/posts/<post_id>/comment/` не найдена, проверьте этот адрес в *urls.py*'
+        assert response.status_code != 404, (
+            'Страница `/posts/<post_id>/comment/` не найдена, проверьте этот адрес в *urls.py*'
+        )
 
         text = 'Новый коммент 94938!'
         response = user_client.post(url, data={'text': text})
@@ -147,9 +147,9 @@ class TestComment:
         comment = Comment.objects.filter(
             text=text, post=post, author=post.author
         ).first()
-        assert (
-            comment is not None
-        ), 'Проверьте, что вы создаёте новый комментарий `/posts/<post_id>/comment/`'
+        assert comment is not None, (
+            'Проверьте, что вы создаёте новый комментарий `/posts/<post_id>/comment/`'
+        )
         assert response.url.startswith(f'/posts/{post.id}'), (
             'Проверьте, что перенаправляете на страницу поста '
             '`/posts/<post_id>/` после добавления нового комментария'

@@ -38,9 +38,9 @@ class TestFollow:
         related_name = 'follower' if field_name == 'user' else 'following'
         checking_field = search_field(Follow._meta.fields, field_name)
         field_in_model_text = f'Поле `{field_name}` в модели `{model_name}`'
-        assert (
-            checking_field is not None
-        ), f'{field_in_model_text} отсутствует в модели или переименовано. '
+        assert checking_field is not None, (
+            f'{field_in_model_text} отсутствует в модели или переименовано. '
+        )
         assert isinstance(checking_field, ForeignKey), (
             f'{field_in_model_text} '
             'должно быть связано через отношение многие-к-одному '
@@ -75,9 +75,9 @@ class TestFollow:
             )
         if response.status_code in {301, 302} and response.url == f'{url}/':
             response = client.get(f'{url}/')
-        assert (
-            response.status_code != 404
-        ), f'Страница `{str_url}` не найдена, проверьте этот адрес в *urls.py*'
+        assert response.status_code != 404, (
+            f'Страница `{str_url}` не найдена, проверьте этот адрес в *urls.py*'
+        )
         return response
 
     @pytest.mark.django_db(transaction=True)
@@ -126,17 +126,17 @@ class TestFollow:
             'Поле `user` в модели `Follow` должно при объявлении содержать '
             '`related_name="follower"'
         )
-        assert (
-            user.follower.count() == 0
-        ), 'Проверьте, что правильно считается подписки'
+        assert user.follower.count() == 0, (
+            'Проверьте, что правильно считается подписки'
+        )
         self.check_url(
             user_client,
             f'/profile/{post.author.username}/follow',
             '/profile/<username>/follow/',
         )
-        assert (
-            user.follower.count() == 0
-        ), 'Проверьте, что нельзя подписаться на самого себя'
+        assert user.follower.count() == 0, (
+            'Проверьте, что нельзя подписаться на самого себя'
+        )
 
         user_1 = get_user_model().objects.create_user(username='TestUser_2344')
         user_2 = get_user_model().objects.create_user(
@@ -148,19 +148,19 @@ class TestFollow:
             f'/profile/{user_1.username}/follow',
             '/profile/<username>/follow/',
         )
-        assert (
-            user.follower.count() == 1
-        ), 'Проверьте, что вы можете подписаться на пользователя'
+        assert user.follower.count() == 1, (
+            'Проверьте, что вы можете подписаться на пользователя'
+        )
         self.check_url(
             user_client,
             f'/profile/{user_1.username}/follow',
             '/profile/<username>/follow/',
         )
-        assert (
-            user.follower.count() == 1
-        ), 'Проверьте, что вы можете подписаться на пользователя только один раз'
+        assert user.follower.count() == 1, (
+            'Проверьте, что вы можете подписаться на пользователя только один раз'
+        )
 
-        image = tempfile.NamedTemporaryFile(suffix='.jpg').name
+        image = tempfile.NamedTemporaryFile(suffix='.jpg').name  # noqa: SIM115
         Post.objects.create(
             text='Тестовый пост 4564534', author=user_1, image=image
         )
@@ -179,51 +179,51 @@ class TestFollow:
         )
 
         response = self.check_url(user_client, '/follow', '/follow/')
-        assert (
-            'page_obj' in response.context
-        ), 'Проверьте, что передали переменную `page_obj` в контекст страницы `/follow/`'
-        assert (
-            type(response.context['page_obj']) is Page
-        ), 'Проверьте, что переменная `page_obj` на странице `/follow/` типа `Page`'
-        assert (
-            len(response.context['page_obj']) == 2
-        ), 'Проверьте, что на странице `/follow/` список статей авторов на которых подписаны'
+        assert 'page_obj' in response.context, (
+            'Проверьте, что передали переменную `page_obj` в контекст страницы `/follow/`'
+        )
+        assert type(response.context['page_obj']) is Page, (
+            'Проверьте, что переменная `page_obj` на странице `/follow/` типа `Page`'
+        )
+        assert len(response.context['page_obj']) == 2, (
+            'Проверьте, что на странице `/follow/` список статей авторов на которых подписаны'
+        )
 
         self.check_url(
             user_client,
             f'/profile/{user_2.username}/follow',
             '/profile/<username>/follow/',
         )
-        assert (
-            user.follower.count() == 2
-        ), 'Проверьте, что вы можете подписаться на пользователя'
+        assert user.follower.count() == 2, (
+            'Проверьте, что вы можете подписаться на пользователя'
+        )
         response = self.check_url(user_client, '/follow', '/follow/')
-        assert (
-            len(response.context['page_obj']) == 5
-        ), 'Проверьте, что на странице `/follow/` список статей авторов на которых подписаны'
+        assert len(response.context['page_obj']) == 5, (
+            'Проверьте, что на странице `/follow/` список статей авторов на которых подписаны'
+        )
 
         self.check_url(
             user_client,
             f'/profile/{user_1.username}/unfollow',
             '/profile/<username>/unfollow/',
         )
-        assert (
-            user.follower.count() == 1
-        ), 'Проверьте, что вы можете отписаться от пользователя'
+        assert user.follower.count() == 1, (
+            'Проверьте, что вы можете отписаться от пользователя'
+        )
         response = self.check_url(user_client, '/follow', '/follow/')
-        assert (
-            len(response.context['page_obj']) == 3
-        ), 'Проверьте, что на странице `/follow/` список статей авторов на которых подписаны'
+        assert len(response.context['page_obj']) == 3, (
+            'Проверьте, что на странице `/follow/` список статей авторов на которых подписаны'
+        )
 
         self.check_url(
             user_client,
             f'/profile/{user_2.username}/unfollow',
             '/profile/<username>/unfollow/',
         )
-        assert (
-            user.follower.count() == 0
-        ), 'Проверьте, что вы можете отписаться от пользователя'
+        assert user.follower.count() == 0, (
+            'Проверьте, что вы можете отписаться от пользователя'
+        )
         response = self.check_url(user_client, '/follow', '/follow/')
-        assert (
-            len(response.context['page_obj']) == 0
-        ), 'Проверьте, что на странице `/follow/` список статей авторов на которых подписаны'
+        assert len(response.context['page_obj']) == 0, (
+            'Проверьте, что на странице `/follow/` список статей авторов на которых подписаны'
+        )

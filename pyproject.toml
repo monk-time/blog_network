@@ -1,3 +1,23 @@
+[project]
+name = "blog-network"
+version = "0.1.0"
+description = "Сервис социальной сети блогеров"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "django>=5.1.4",
+    "django-debug-toolbar>=4.4.6",
+    "pillow>=11.0.0",
+    "sorl-thumbnail>=12.11.0",
+]
+
+[dependency-groups]
+dev = [
+    "mixer>=7.2.2",
+    "pytest>=8.3.4",
+    "pytest-django>=4.9.0",
+]
+
 [tool.pytest.ini_options]
 pythonpath = 'app'
 DJANGO_SETTINGS_MODULE = 'yatube.settings'
@@ -6,12 +26,15 @@ testpaths = ['tests/']
 python_files = ['test_*.py']
 
 [tool.ruff]
-target-version = "py312"
+target-version = "py313"
 line-length = 79
 preview = true
 output-format = "concise" # preview mode switches this to full
 exclude = ["migrations"]
 src = ["app"]
+
+[tool.ruff.format]
+quote-style = "single"
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -31,21 +54,15 @@ ignore = [
     "PLR2004", # magic-value-comparison      (demands too many constants)
     "TD003",   # missing-todo-link           (too cumbersome)
     "G004",    # logging-f-string            (pointless micro-optimization in most cases)
+    "DOC201",  # docstring-missing-returns   (excessive documentation)
+    "DOC402",  # docstring-missing-yields    (excessive documentation)
+    "DOC501",  # docstring-missing-exception (excessive documentation)
     "TID252",  # relative-imports            (django: apps are more portable with relative imports)
 ]
 allowed-confusables = [
     "а", "б", "в", "г", "е", "з", "и", "к", "м", "н", "о", "р", "с", "у", "ф", "х",
     "А", "Б", "В", "Г", "Е", "З", "И", "К", "М", "Н", "О", "Р", "С", "У", "Ф", "Х",
 ]
-
-[tool.ruff.lint.per-file-ignores]
-"tests/*" = [
-    "N802",    # invalid-function-name       (common in test methods)
-    "PLR6301", # no-self-use                 (common in test methods)
-    "ARG002",  # unused-method-argument      (common with fixtures)
-    "BLE001",  # blind-except                (common in tests)
-]
-"app/*" = ["PT"] # django tests are in unittest
 
 [tool.ruff.lint.pycodestyle]
 max-line-length = 100 # don't report (E501) lines of length 80..100 that cannot be split by autoformatter
@@ -61,5 +78,11 @@ parametrize-values-type = "tuple"
 [tool.ruff.lint.flake8-self]
 ignore-names = ["_meta", "_registry"]
 
-[tool.ruff.format]
-quote-style = "single"
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "N802",    # invalid-function-name       (common in test methods)
+    "PLR6301", # no-self-use                 (common in test methods)
+    "ARG002",  # unused-method-argument      (common with fixtures)
+    "BLE001",  # blind-except                (common in tests)
+]
+"app/*" = ["PT"] # django tests are in unittest

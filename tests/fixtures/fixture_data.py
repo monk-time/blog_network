@@ -20,7 +20,7 @@ def mixer():
 
 @pytest.fixture
 def post(user):
-    image = tempfile.NamedTemporaryFile(suffix='.jpg').name
+    image = tempfile.NamedTemporaryFile(suffix='.jpg').name  # noqa: SIM115
     return Post.objects.create(
         text='Тестовый пост 1', author=user, image=image
     )
@@ -37,7 +37,7 @@ def group():
 
 @pytest.fixture
 def post_with_group(user, group):
-    image = tempfile.NamedTemporaryFile(suffix='.jpg').name
+    image = tempfile.NamedTemporaryFile(suffix='.jpg').name  # noqa: SIM115
     return Post.objects.create(
         text='Тестовый пост 2', author=user, group=group, image=image
     )

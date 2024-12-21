@@ -106,7 +106,7 @@ class Follow(models.Model):
             ),
             models.CheckConstraint(
                 name='cant_subscribe_to_self',
-                check=~models.Q(user=models.F('author')),
+                condition=~models.Q(user=models.F('author')),
             ),
         )
         verbose_name = 'Подписка'

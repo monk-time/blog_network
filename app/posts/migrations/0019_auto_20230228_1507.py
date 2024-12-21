@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddConstraint(
             model_name='follow',
-            constraint=models.CheckConstraint(check=models.Q(_negated=True, user=django.db.models.expressions.F('author')), name='cant_subscribe_to_self'),
+            constraint=models.CheckConstraint(condition=models.Q(_negated=True, user=django.db.models.expressions.F('author')), name='cant_subscribe_to_self'),
         ),
     ]

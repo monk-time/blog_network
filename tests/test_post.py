@@ -20,12 +20,12 @@ class TestPostView:
         response = client.get(url_index)
 
         page_context = get_field_from_context(response.context, Page)
-        assert (
-            page_context is not None
-        ), 'Проверьте, что передали статьи автора в контекст главной страницы `/` типа `Page`'
-        assert (
-            len(page_context.object_list) == 1
-        ), 'Проверьте, что в контекст главной страницы переданы правильные статьи автора'
+        assert page_context is not None, (
+            'Проверьте, что передали статьи автора в контекст главной страницы `/` типа `Page`'
+        )
+        assert len(page_context.object_list) == 1, (
+            'Проверьте, что в контекст главной страницы переданы правильные статьи автора'
+        )
         posts_list = page_context.object_list
         for loaded_post in posts_list:
             assert hasattr(loaded_post, 'image'), (
@@ -44,9 +44,9 @@ class TestPostView:
         response = client.get(url_index)
 
         page_context = get_field_from_context(response.context, Page)
-        assert (
-            page_context is not None
-        ), 'Проверьте, что передали статьи автора в контекст главной страницы `/` типа `Page`'
+        assert page_context is not None, (
+            'Проверьте, что передали статьи автора в контекст главной страницы `/` типа `Page`'
+        )
         posts_cnt = Post.objects.count()
         post.delete()
         assert len(page_context.object_list) == posts_cnt is not None, (
@@ -73,14 +73,14 @@ class TestPostView:
             )
         if response.status_code in {301, 302}:
             response = client.get(f'/posts/{post_with_group.id}/')
-        assert (
-            response.status_code != 404
-        ), 'Страница `/posts/<post_id>/` не найдена, проверьте этот адрес в *urls.py*'
+        assert response.status_code != 404, (
+            'Страница `/posts/<post_id>/` не найдена, проверьте этот адрес в *urls.py*'
+        )
 
         post_context = get_field_from_context(response.context, Post)
-        assert (
-            post_context is not None
-        ), 'Проверьте, что передали статью в контекст страницы `/posts/<post_id>/` типа `Post`'
+        assert post_context is not None, (
+            'Проверьте, что передали статью в контекст страницы `/posts/<post_id>/` типа `Post`'
+        )
 
         try:
             from posts.forms import CommentForm
@@ -131,9 +131,9 @@ class TestPostEditView:
             f'/posts/{post_with_group.id}'
         ):
             response = client.get(f'/posts/{post_with_group.id}/edit/')
-        assert (
-            response.status_code != 404
-        ), 'Страница `/posts/<post_id>/edit/` не найдена, проверьте этот адрес в *urls.py*'
+        assert response.status_code != 404, (
+            'Страница `/posts/<post_id>/edit/` не найдена, проверьте этот адрес в *urls.py*'
+        )
 
         assert response.status_code in {301, 302}, (
             'Проверьте, что вы переадресуете пользователя со страницы '
@@ -150,9 +150,9 @@ class TestPostEditView:
             )
         if response.status_code in {301, 302}:
             response = user_client.get(f'/posts/{post_with_group.id}/edit/')
-        assert (
-            response.status_code != 404
-        ), 'Страница `/posts/<post_id>/edit/` не найдена, проверьте этот адрес в *urls.py*'
+        assert response.status_code != 404, (
+            'Страница `/posts/<post_id>/edit/` не найдена, проверьте этот адрес в *urls.py*'
+        )
 
         post_context = get_field_from_context(response.context, Post)
         postform_context = get_field_from_context(response.context, PostForm)
@@ -161,16 +161,16 @@ class TestPostEditView:
             '`/posts/<post_id>/edit/` типа `Post` или `PostForm`'
         )
 
-        assert (
-            'form' in response.context
-        ), 'Проверьте, что передали форму `form` в контекст страницы `/posts/<post_id>/edit/`'
+        assert 'form' in response.context, (
+            'Проверьте, что передали форму `form` в контекст страницы `/posts/<post_id>/edit/`'
+        )
         fields_cnt = 3
-        assert (
-            len(response.context['form'].fields) == fields_cnt
-        ), f'Проверьте, что в форме `form` на страницу `/posts/<post_id>/edit/` {fields_cnt} поля'
-        assert (
-            'group' in response.context['form'].fields
-        ), 'Проверьте, что в форме `form` на странице `/posts/<post_id>/edit/` есть поле `group`'
+        assert len(response.context['form'].fields) == fields_cnt, (
+            f'Проверьте, что в форме `form` на страницу `/posts/<post_id>/edit/` {fields_cnt} поля'
+        )
+        assert 'group' in response.context['form'].fields, (
+            'Проверьте, что в форме `form` на странице `/posts/<post_id>/edit/` есть поле `group`'
+        )
         assert (
             type(response.context['form'].fields['group'])
             is forms.models.ModelChoiceField
@@ -183,9 +183,9 @@ class TestPostEditView:
             'поле `group` не обязательно'
         )
 
-        assert (
-            'text' in response.context['form'].fields
-        ), 'Проверьте, что в форме `form` на странице `/posts/<post_id>/edit/` есть поле `text`'
+        assert 'text' in response.context['form'].fields, (
+            'Проверьте, что в форме `form` на странице `/posts/<post_id>/edit/` есть поле `text`'
+        )
         assert (
             type(response.context['form'].fields['text'])
             is forms.fields.CharField
@@ -198,9 +198,9 @@ class TestPostEditView:
             'поле `group` обязательно'
         )
 
-        assert (
-            'image' in response.context['form'].fields
-        ), 'Проверьте, что в форме `form` на странице `/posts/<post_id>/edit/` есть поле `image`'
+        assert 'image' in response.context['form'].fields, (
+            'Проверьте, что в форме `form` на странице `/posts/<post_id>/edit/` есть поле `image`'
+        )
         assert (
             type(response.context['form'].fields['image'])
             is forms.fields.ImageField
@@ -253,9 +253,10 @@ class TestPostEditView:
             text=text,
             group=post_with_group.group,
         ).first()
-        assert (
-            post is not None
-        ), 'Проверьте, что вы изменили пост при отправки формы на странице `/posts/<post_id>/edit/`'
-        assert response.url.startswith(
-            f'/posts/{post_with_group.id}'
-        ), 'Проверьте, что перенаправляете на страницу поста `/posts/<post_id>/`'
+        assert post is not None, (
+            'Проверьте, что вы изменили пост при отправки формы '
+            'на странице `/posts/<post_id>/edit/`'
+        )
+        assert response.url.startswith(f'/posts/{post_with_group.id}'), (
+            'Проверьте, что перенаправляете на страницу поста `/posts/<post_id>/`'
+        )

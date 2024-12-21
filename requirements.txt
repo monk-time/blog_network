@@ -1,7 +1,0 @@
-Django==5.0.3
-Pillow==10.3.0
-sorl-thumbnail==12.10.0
-django-debug-toolbar==4.3.0
-pytest==8.1.1
-pytest-django==4.8.0
-mixer==7.2.2
